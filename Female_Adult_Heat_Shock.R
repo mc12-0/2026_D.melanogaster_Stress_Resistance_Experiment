@@ -163,7 +163,7 @@ Final <- (SAHS.F_b1|SAHS.F_b2)/(SAHS.F_b3|SAHS.F_b4) + plot_annotation(tag_level
 
 # Export plot as png file
 ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/Stress_Resistance_Experiment/Analysis/2026_Stress_Resistance/Graphs _and_Tables/Word/Female_Adult_Heat_Shock.png",
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/Stress_Resistance_Experiment/Analysis/2026_Stress_Resistance/R_Scripts_Final/D.melanogaster_Stress_Experiment/Word/Female_Adult_Heat_Shock.png",
   plot = Final,          
   width = 40,                    
   height = 20,                    
