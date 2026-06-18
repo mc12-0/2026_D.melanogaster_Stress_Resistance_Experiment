@@ -1,5 +1,5 @@
-# D.melanogaster_Stress_Experiment
-# README - Data for IaSC EE meta-analysis, from HT et al.(2026) 
+# README - Data structure
+
 
 ## Title of Dataset
 Measures of male reproductive fitness, success in mate choice trials, fecundity induced by successful males, sperm offense; mate harm and productivity induced in a male limited selection experiment. 
