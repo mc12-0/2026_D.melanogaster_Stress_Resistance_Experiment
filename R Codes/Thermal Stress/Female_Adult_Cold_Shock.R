@@ -41,7 +41,7 @@ y_axis <- scale_y_continuous(
 DataSACS.F <- read.csv2(file.choose())
 SACS.F <- DataSACS.F
 
-SACS.F$F.Survival <- SACS.F$ALIVE.F/SACS.F$TOTAL.F
+SACS.F$F.Survival <- SACS.F$ALIVE_F/SACS.F$TOTAL_F
 
 
 # Assumptions
