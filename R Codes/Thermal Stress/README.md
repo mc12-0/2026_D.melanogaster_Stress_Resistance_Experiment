@@ -1,111 +1,97 @@
-# README - Data structure
+# README - Thermal stress Data structure
+This section contains all the data files (.csv format) used to analyze the impact of 3 different chromosomal inversions (karyotypes) on the survival rates of Zambia originating *Drosophila melanogaster* across various developmental stages and under distinct thermal stress conditions.
 
+## Experimental design
+Different thermal stress were conduct: 
+1. Cold Shock on adult flies (males and females): Vials containing generally 15 males and 15 female were placed in ice at 0°C for 18 hours.
+2. Heat Shock on adult flies (males and females): Vials containing generally 15 males and 15 female were placed in an oven at 39°C for 75 minutes.
+3. Cold Shock on larvae: Vials containg 60 hours-old larvae were placed in ice at 0°C for 12 hours.
+4. Heat Shock on larvae: Vials containg 60 hours-old larvae were placed in ice at 39°C for 5.5 hours.
 
-## Title of Dataset
-Measures of male reproductive fitness, success in mate choice trials, fecundity induced by successful males, sperm offense; mate harm and productivity induced in a male limited selection experiment. 
-
-## Associated Preprint
-- **Title:** Male-benefit adaptation under sex-limited selection shaped by compensatory evolution in Drosophila melanogaster
-- **Authors:** 
-	- Harshavardhan Thyagarajan, 
-	- Mindy G. Baroody, 
-	- Imran Sayyed, 
-	- Joshua A. Kowal, 
-	- Troy Day,  
-	- Adam K. Chippindale
-- **DOI:** doi.org/10.64898/2026.03.03.709222 
-
-## Dataset Overview
-This dataset contains experimental data on fitness, mate choice, mate harm and sperm competition measurements for male-limited and control selection populations. The data pertains to male flies from experimentally evolved *Drosophila melanogaster* populations. The data are provided as CSV files.  
-
-The 4 files correspond to the following datasets:  
-1. `CRF.csv` — Competitive reproductive fitness 
-2. `MC.csv` — Mate choice and fecundity induction
-3. `SC.csv` — Sperm offense 
-4. `MH_CG.csv` — Mate harm   
-
-Common variables:
-1. Selection 
-	ML — Male limited
-	MC — Matched control (matched by replicate number, for example ML1 and MC1 are derived from the same parental population)
-2. Background - Genetic background of test males
-  HC - Home court (ML like genetics), derived from clone generator dams
-  WT - Wild type (MC like genetics), derived from control dams
-3. Female - Female used for testing male fitness / mating success / sperm offense etc.
-  DTP - Clone generator female
-  CBr (or) Cp - Recessively marked control females
-4. Replicate — This describes the replicate pairs of selected and control populations. It is necessary to clarify here the method of setting up replicates. Commonly, a single source population is used to derive n statistical replicate populations under selection / control conditions. Here rather, we use 3 long separated populations (themselves originally derived as statistical replicates over 20 years prior) to initiate each selection / control pair. 
-5. Contest — An identifier for a distinct chamber in which an assay was conducted. 
----
-
-## File Details
-
-### 1. `CRF.csv`
-
-* **Dimensions:** 456 rows × 7 columns
-* **Columns:**
-
-  * `Selection` — Described above, categorical
-  * `Female` — Described above, categorical
-  * `Background` — Described above, categorical
-  * `Replicate` — Described above, categorical
-  * `Contest` — Described above, categorical
-  * `Red` — Number of red-eyed progeny, count
-  * `U` — Number of mutant/recessively marked progeny, count
+## Data overview
+The files in this repository follow a strict naming convention to quickly identify the specific experiment:
+- First letter(s): Developmental Stage (A = Adult, L = Larvae)
+- Middle letters: Type of Stress (CS = Cold Shock, HS = Heat Shock)
+- Last letter (if applicable): Sex (_F = Females, _M = Males)
   
-### 2. `MC.csv`
+The 6 files correspond to the following datasets:
+1. `ACS_F.csv`: Resitance of Adult Females to Cold Shock  
+2. `ACS_M.csv`: Resitance of Adult Males to Cold Shock
+3. `AHS_F.csv`: Resitance of Adult Females to Heat Shock 
+4. `AHS_M.csv`: Resitance of Adult Males to Heat Shock 
+5. `LCS.csv`: Rsistance of Larvae to Cold Shock
+6. `LHS.csv`: Resistance of Larvae to Heat Shock
 
-* **Dimensions:** 864 rows × 11 columns
+### Common Variables 
+1. `Karyotype`: The chromosomal inversion group of the tested flies (e.g., *STD*, *3RP*, *2Lt*, *3RK*, and their corresponding heterozygotes like *3RP_HET_1*). *STD* serves as the standard control group.
+   
+2. `Vial_rep._nr.`: The replicate number for the given karyotype.
+   
+3. `Name_of_tube`: A unique identifier string combining the experiment type, karyotype, and replicate number (e.g., ACS 3RP_HET_1_5).
+
+## File details
+
+### 1. `ACS_F.csv` : Adult Cold Shock - Females
+* **Dimensions:** 193 rows × 6 columns
 * **Columns:**
+  * `Karyotype` — Described above, categorical
+  * `Vial_rep._nr.` — Described above, categorical
+  * `Name_of_tube` — Described above, categorical
+  * `TOTAL_F` — Initial number of females placed in the vial before the cold exposure (15 in the majority), count
+  * `ALIVE_F` — Number of females surviving after the cold exposure and the 4 hour recovery, count
+  * `DEAD_F` — Number of females that died during the cold exposure, count
 
-  * `Selection` — Described above, categorical
-  * `Background` — Described above, categorical
-  * `Replicate` — Described above, categorical
-  * `Female` — Described above, categorical
-  * `Contest` — — Described above, categorical
-  * `Obs.start.time` — Observation start time, numeric
-  * `Mating.start.time` — Time when mating began, numeric
-  * `Mating.end.time` — Time when mating ended, numeric
-  * (All time variables recorded in the form of minutes since 00h (for example, 11am = 660 mins))
-  * `Mated.male` — Identity of mating male (e.g. wt or competitor type), categorical
-  * `Offspring_M` — Number of male offspring produced, count
-  * `Offspring_F` — Number of female offspring produced, count
-
-### 3. `MH_CG.csv`
-
-* **Dimensions:** 120 rows × 13 columns
+### 2. `ACS_M.csv` : Adult Cold Shock - Males
+* **Dimensions:** 193 rows × 6 columns
 * **Columns:**
-
-  * `Selection` — Described above, categorical
-  * `Background` — Described above, categorical
-  * `Replicate` — Described above, categorical
-  * `Contest` — Described above, categorical
-  * `Productivity` — Total offspring productivity count, count
-  * `Day0`-`Day7` — Surviving females measurement recorded on day 0-day 7, count
+  * `Karyotype` — Described above, categorical
+  * `Vial_rep._nr.` — Described above, categorical
+  * `Name_of_tube` — Described above, categorical
+  * `TOTAL_F` — Initial number of males placed in the vial before the cold exposure (15 in the majority), count
+  * `ALIVE_F` — Number of males surviving after the cold exposure and the 4 hour recovery, count
+  * `DEAD_F` — Number of males that died during the cold exposure, count
   
-### 4. `SC.csv`
-
-* **Dimensions:** 831 rows × 8 columns
+### 3. `AHS_F.csv` : Adult Heat Shock - Females
+* **Dimensions:** 197 rows × 7 columns
 * **Columns:**
+  * `Karyotype` — Described above, categorical
+  * `Vial_rep._nr.` — Described above, categorical
+  * `Name_of_tube` — Described above, categorical
+  * `TOTAL_F` — Initial number of females placed in the vial before the heat shock (15 in the majority), count
+  * `ALIVE_F` — Number of females surviving after the heat shock and the 4 hour recovery, count
+  * `DEAD_F` — Number of females that died during the heat shock, count
+  * `BORDERS` —Indicate if the vials experienced edge effects during the heat shock (e.g., "YES" or "NO"). Vials marked "YES" were excluded from the final statistical analysis, categorial
+ 
+### 4. `AHS_M.csv` : Adult Heat Shock - Males
+* **Dimensions:** 197 rows × 7 columns
+* **Columns:**
+  * `Karyotype` — Described above, categorical
+  * `Vial_rep._nr.` — Described above, categorical
+  * `Name_of_tube` — Described above, categorical
+  * `TOTAL_F` — Initial number of males placed in the vial before the heat shock (15 in the majority), count
+  * `ALIVE_F` — Number of males surviving after the heat shock and the 4 hour recovery, count
+  * `DEAD_F` — Number of males that died during the heat shock, count
+  * `BORDERS` —Indicate if the vials experienced edge effects during the heat shock (e.g., "YES" or "NO"), categorial
 
-  * `Selection` — Described above, categorical
-  * `Female` — Described above, categorical
-  * `Background` — Described above, categorical
-  * `Replicate` — Described above, categorical
-  * `Vial` — Identifier of an offspring collection unit from a contest, categorical
-  * `WT` — Number of red-eyed progeny, count
-  * `U` — Number of mutant/recessively marked progeny, count
-  * `Contest` — Described above, categorical
-
-## Methods
-
-Full details are provided in associated preprint. Across assays, test males were collected at 10–11 days post-oviposition, and experiments were conducted between days 12-14.
-
-1. *Competitive reproductive fitness* Groups of 30 MC or ML flies were combined with 30 recessively marked competitor (Cr) males and 50 Cr virgin females in ventilated “mini-cages” with yeast for 2 days. 
-
-2. *Mate choice trials -> mating success*: Single test males were combined with a Cr male and a virgin Cr female. When one pair initiated copulation, the rival male was removed without disturbance, and the mating event was monitored until separation. Mating latency, mating duration, and the offspring produced (sex ratio, fecundity induction, and eye-color marker) were recorded to identify the successful sire. 
-
-3. *Sperm offense (P2)*: Groups of 12 virgin Cr females were combined with Cr males, and matings were closely observed. After mating, Cr males were removed. On day 13, 10 “target” males (MC or ML) were added to each vial for a second mating, observed for ~3 hours. Ten females per vial were then isolated for 24 hours to lay eggs. Offspring were scored by eye color to determine the proportion sired by the second male. 
-
-4. *Mate harm*: Groups of 12 virgin Cr females were combined with 10 target male, days 12-14, and males were removed after. Female survivor counts assayed for 7 days starting with introduction of males, and productivity was estimated as pupal counts from eggs laid across the 7 day period.
----
+### 5. `LCS.csv` : Larval Cold Shock
+* **Dimensions:** 219 rows × 7 columns
+* **Columns:**
+  * `No.` —  Index number for the row
+  * `Karyotype` — Described above, categorical
+  * `Vial_rep._nr.` — Described above, categorical
+  * `Name_of_tube` — Described above, categorical
+  * `Total_eggs` — Number of eggs initially placed in the vial (typically 30), count
+  * `Adults` — Number of individuals that successfully developed into adult flies after the larval cold exposure, count
+  * `Pupae` — Number of individuals that reached the pupal stage but do not emerge as adults, count
+ 
+ 
+### 6. `LHS.csv` : Larval Heat Shock
+* **Dimensions:** 201 rows × 7 columns
+* **Columns:**
+  * `No.` —  Index number for the row
+  * `Karyotype` — Described above, categorical
+  * `Vial_rep._nr.` — Described above, categorical
+  * `Name_of_tube` — Described above, categorical
+  * `Total_eggs` — Number of eggs initially placed in the vial (typically 30), count
+  * `Adults` — Number of individuals that successfully developed into adult flies after the larval cold exposure, count
+  * `Pupae` — Number of individuals that reached the pupal stage but do not emerge as adults, count
