@@ -27,7 +27,7 @@ The 6 files correspond to the following datasets:
    
 2. `Vial_rep._nr.`: The replicate number for the given karyotype.
    
-3. `Name_of_tube`: A unique identifier string combining the experiment type, karyotype, and replicate number (e.g., ACS 3RP_HET_1_5).
+3. `Name_of_tube`: A unique identifier string combining the karyotype, and replicate number (e.g., 3RP_5).
 
 ## File details
 
