@@ -43,7 +43,7 @@ DataSAHS.M <- read.csv2(file.choose())
 SAHS.M <- DataSAHS.M
 
 
-SAHS.M$M.Survival <- SAHS.M$ALIVE.M/SAHS.M$TOTAL.M
+SAHS.M$M.Survival <- SAHS.M$ALIVE_M/SAHS.M$TOTAL_M
 
 
 boxplot(M.Survival~BORDERS, SAHS.M)

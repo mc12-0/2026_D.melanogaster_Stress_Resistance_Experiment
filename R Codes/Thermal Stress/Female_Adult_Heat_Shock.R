@@ -44,7 +44,7 @@ y_axis <- scale_y_continuous(
 DataSAHS.F <- read.csv2(file.choose())
 SAHS.F <- DataSAHS.F
 
-SAHS.F$F.Survival <- SAHS.F$ALIVE.F/SAHS.F$TOTAL.F
+SAHS.F$F.Survival <- SAHS.F$ALIVE_F/SAHS.F$TOTAL_F
 
 
 boxplot(F.Survival~BORDERS, SAHS.F)
