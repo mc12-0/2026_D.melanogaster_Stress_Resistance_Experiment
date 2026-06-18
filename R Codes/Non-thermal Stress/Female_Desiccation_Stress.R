@@ -1,20 +1,10 @@
-library(ggplot2)
-#library(ggsignif)
-library(readxl)
-#library(FSA)
-library(stringr)
+library(ggpubr) 
+library(dplyr) 
+library(ggplot2) 
+library(rstatix) 
+library(car) 
+library(stringr)  
 library(patchwork)
-library(tidyverse)
-library(car)
-library(lattice)
-library(rstatix)
-library(ggpubr)
-library(broom)
-library(flextable)
-library(emmeans)
-library(MASS)
-library(dplyr)
-
 
 Colors = c(
   "STD" ="#00b4d8",
@@ -29,15 +19,15 @@ Colors = c(
   "3RK_HET_2"="#ebd9fc"
 )
 
-
 plot_theme <- theme_bw()+
   theme(axis.line = element_line(color = "black", linewidth = 0.8),
-        axis.title.x = element_text(face = "bold", size = 14),
-        axis.title.y = element_text(face = "bold", size = 14),
-        axis.text.x = element_text(face = "bold", size = 11),
-        axis.text.y = element_text(face = "bold", size = 11),
-        legend.title = element_text(face = "bold", size = 16),
-        legend.text = element_text(face = "bold", size = 12)
+        axis.title.x = element_text(face = "bold", size = 22),
+        axis.title.y = element_text(face = "bold", size = 22),
+        axis.text.x = element_text(face = "bold", size = 16),
+        axis.text.y = element_text(face = "bold", size = 16),
+        legend.title = element_text(face = "bold", size = 20),
+        legend.text = element_text(face = "bold", size = 18),
+        plot.tag = element_text(size = 20, face="bold")
   )
 
 y_axis <- scale_y_continuous(
@@ -50,10 +40,9 @@ y_axis <- scale_y_continuous(
 
 DataSADS.F <- read.csv2(file.choose())
 SADS.F <- DataSADS.F
-SADS.F <- DataSADS.F[-c(which(is.na(DataSADS.F$Total.Adults))),]
 
 
-SADS.F$F.Survival <- SADS.F$ALIVE.F.after.exp/SADS.F$TOTAL.F
+SADS.F$F.Survival <- SADS.F$ALIVE_F/SADS.F$TOTAL_F
 
 
 # Assumptions
@@ -63,8 +52,15 @@ M_SADS.F <- lm(F.Survival ~ Karyotype, SADS.F)
 shapiro.test(aov(M_SADS.F)$residuals)
 
 par(mfrow=c(1,2))
-hist(aov(M_SADS.F)$residuals)
-qqPlot(aov(M_SADS.F)$residuals, id=FALSE)
+hist(aov(M_SADS.F)$residuals,
+     main="A. Histogramm of residuals",
+     xlab="Residuals value",
+     ylab="Frequency")
+
+qqPlot(aov(M_SADS.F)$residuals, id=FALSE,
+       main="B. Q-Q Plot",
+       xlab="Theoretical Quantiles",
+       ylab="Residuals value")
 
 leveneTest(F.Survival ~ Karyotype, SADS.F)
 
@@ -114,7 +110,9 @@ SADS.F_b1 <- ggplot(SADS.F_3RP, aes(x = Karyotype, y = F.Survival, fill = Karyot
   y_axis+
   plot_theme+
   ylab("Female survival rate in %")+
-  stat_pvalue_manual(p_SADS.F_3RP, label="p.signif", hide.ns = TRUE, y.position = 1.05,  step.increase = 0.08)
+  stat_pvalue_manual(p_SADS.F_3RP, label="p.signif", hide.ns = TRUE, y.position = 1.05,  step.increase = 0.08)+
+  labs(tag="A")
+
 
 SADS.F_b2 <- ggplot(SADS.F_2Lt, aes(x = Karyotype, y = F.Survival, fill = Karyotype)) +
   geom_boxplot() +
@@ -123,7 +121,8 @@ SADS.F_b2 <- ggplot(SADS.F_2Lt, aes(x = Karyotype, y = F.Survival, fill = Karyot
   y_axis+
   plot_theme+
   ylab("Female survival rate in %")+
-  stat_pvalue_manual(p_SADS.F_2Lt, label="p.signif", hide.ns = TRUE, y.position= 1.05, step.increase = 0.08)
+  stat_pvalue_manual(p_SADS.F_2Lt, label="p.signif", hide.ns = TRUE, y.position= 1.05, step.increase = 0.08)+
+  labs(tag="B")
 
 
 SADS.F_b3 <- ggplot(SADS.F_3RK, aes(x = Karyotype, y = F.Survival, fill = Karyotype)) +
@@ -133,7 +132,9 @@ SADS.F_b3 <- ggplot(SADS.F_3RK, aes(x = Karyotype, y = F.Survival, fill = Karyot
   y_axis+
   plot_theme+
   ylab("Female survival rate in %")+
-  stat_pvalue_manual(p_SADS.F_3RK, label="p.signif", hide.ns = TRUE, y.position = 1.05, step.increase = 0.08)
+  stat_pvalue_manual(p_SADS.F_3RK, label="p.signif", hide.ns = TRUE, y.position = 1.05, step.increase = 0.08)+
+  labs(tag="C")
+
 
 
 SADS.F_b4 <- ggplot(SADS.F_Homoz, aes(x = Karyotype, y = F.Survival, fill = Karyotype)) +
@@ -143,24 +144,22 @@ SADS.F_b4 <- ggplot(SADS.F_Homoz, aes(x = Karyotype, y = F.Survival, fill = Kary
   y_axis+
   plot_theme+
   ylab("Female survival rate in %")+
-  stat_pvalue_manual(p_SADS.F_Homoz, label="p.signif", hide.ns = TRUE, y.position = 1.05, step.increase = 0.08)
+  stat_pvalue_manual(p_SADS.F_Homoz, label="p.signif", hide.ns = TRUE, y.position = 1.05, step.increase = 0.08)+
+  labs(tag="D")
 
 
-Final <- (SADS.F_b1|SADS.F_b2)/(SADS.F_b3|SADS.F_b4) + plot_annotation(tag_levels='A',
-                                                                       theme=theme(plot.title=element_text(hjust=0.5, size =18, face="bold"),
-                                                                          plot.caption = element_text(hjust=0.5, size =12)))
-                                            #+ plot_annotation(title="Female Survival after a Desiccation Stress", 
+
+Final <- (SADS.F_b1|SADS.F_b2)/(SADS.F_b3|SADS.F_b4) 
 
 
 
 # Export plot as png file
-ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/Stress_Resistance_Experiment/Analysis/2026_Stress_Resistance/Graphs _and_Tables/Word/Female_Desiccation_Stress.png",
-  plot = Final,          
-  width = 40,                    
-  height = 20,                    
-  units = "cm",                   
-  dpi = 300                        
+ggsave(filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Female_Desiccation_Stress.png",
+       plot = Final,          
+       width = 45,                    
+       height = 25,                    
+       units = "cm",                   
+       dpi = 300                        
 )
 
 

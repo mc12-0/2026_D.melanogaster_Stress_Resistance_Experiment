@@ -1,19 +1,10 @@
+library(ggpubr) 
+library(dplyr) 
 library(ggplot2)
-#library(ggsignif)
-library(readxl)
-#library(FSA)
-library(stringr)
-library(patchwork)
-library(tidyverse)
-library(car)
-library(lattice)
 library(rstatix)
-library(ggpubr)
-library(broom)
-library(flextable)
-library(emmeans)
-library(MASS)
-library(dplyr)
+library(car) 
+library(stringr)  
+library(patchwork)
 
 
 Colors = c(
@@ -31,17 +22,18 @@ Colors = c(
 
 plot_theme <- theme_bw()+
   theme(axis.line = element_line(color = "black", linewidth = 0.8),
-        axis.title.x = element_text(face = "bold", size = 14),
-        axis.title.y = element_text(face = "bold", size = 14),
-        axis.text.x = element_text(face = "bold", size = 11),
-        axis.text.y = element_text(face = "bold", size = 11),
-        legend.title = element_text(face = "bold", size = 16),
-        legend.text = element_text(face = "bold", size = 12)
+        axis.title.x = element_text(face = "bold", size = 22),
+        axis.title.y = element_text(face = "bold", size = 22),
+        axis.text.x = element_text(face = "bold", size = 16),
+        axis.text.y = element_text(face = "bold", size = 16),
+        legend.title = element_text(face = "bold", size = 20),
+        legend.text = element_text(face = "bold", size = 18),
+        plot.tag = element_text(size = 20, face="bold")
   )
 
 y_axis <- scale_y_continuous(
-  limits = c(0, 0.4),
-  breaks = c(0, 0.1, 0.2, 0.3, 0.4)
+  limits = c(0, 0.5),
+  breaks = c(0, 0.1, 0.2, 0.3, 0.4, 0.5)
 )
 
 
@@ -51,8 +43,8 @@ DataSLCS <- read.csv2(file.choose())
 SLCS <- DataSLCS
 
 
-SLCS$Total.survival <- SLCS$Adults
-SLCS$Survival.rate <- SLCS$Total.survival/30
+SLCS$Total.survival <- SLCS$Adults +SLCS$Pupae
+SLCS$Survival.rate <- SLCS$Total.survival/SLCS$Total_eggs
 
 # Assumptions
 
@@ -60,8 +52,15 @@ M_Survival_Rate <- lm(Survival.rate~Karyotype, SLCS)
 shapiro.test(M_Survival_Rate$residuals)
 
 par(mfrow=c(1,2))
-hist(aov(M_Survival_Rate)$residuals)
-qqPlot(aov(M_Survival_Rate)$residuals, id=FALSE)
+hist(aov(M_Survival_Rate)$residuals,
+     main="A. Histogramm of residuals",
+     xlab="Residuals value",
+     ylab="Frequency")
+
+qqPlot(aov(M_Survival_Rate)$residuals, id=FALSE,
+       main="B. Q-Q Plot",
+       xlab="Theoretical Quantiles",
+       ylab="Residuals value")
 
 leveneTest(Survival.rate~Karyotype, SLCS)
 
@@ -114,7 +113,8 @@ SLCS_b1 <- ggplot(SLCS_3RP, aes(x = Karyotype, y = Survival.rate, fill = Karyoty
   y_axis+
   plot_theme+
   ylab("Survival rate in %" )+
-  stat_pvalue_manual(p_SLCS_3RP, label="p.signif", hide.ns = TRUE, y.position = 0.35, step.increase = 0.08)
+  labs(tag="A")+
+  stat_pvalue_manual(p_SLCS_3RP, label="p.signif", hide.ns = TRUE, y.position = 0.40, step.increase = 0.08)
 
 
 SLCS_b2 <- ggplot(SLCS_2Lt, aes(x = Karyotype, y = Survival.rate, fill = Karyotype)) +
@@ -125,6 +125,7 @@ SLCS_b2 <- ggplot(SLCS_2Lt, aes(x = Karyotype, y = Survival.rate, fill = Karyoty
   theme_bw()+
   plot_theme+
   ylab("Survival rate in %" )+
+  labs(tag="B")+
   stat_pvalue_manual(p_SLCS_2Lt, label="p.signif", hide.ns = TRUE, y.position=0.35, step.increase = 0.08)
 
 
@@ -135,6 +136,7 @@ SLCS_b3 <- ggplot(SLCS_3RK, aes(x = Karyotype, y = Survival.rate, fill = Karyoty
   y_axis+
   plot_theme+
   ylab("Survival rate in %" )+
+  labs(tag="C")+
   stat_pvalue_manual(p_SLCS_3RK, label="p.signif", hide.ns = TRUE, y.position = 0.35,  step.increase = 0.08)
 
 
@@ -145,20 +147,19 @@ SLCS_b4 <- ggplot(SLCS_Homoz, aes(x = Karyotype, y = Survival.rate, fill = Karyo
   y_axis+
   plot_theme+
   ylab("Survival rate in %" )+
-  stat_pvalue_manual(p_SLCS_Homoz, label="p.signif", hide.ns = TRUE, y.position = 0.35, step.increase = 0.08)
+  labs(tag="D")+
+  stat_pvalue_manual(p_SLCS_Homoz, label="p.signif", hide.ns = TRUE, y.position = 0.40, step.increase = 0.08)
 
 
-Final <- (SLCS_b1|SLCS_b2)/(SLCS_b3|SLCS_b4) + plot_annotation(tag_levels='A', 
-                                      theme=theme(plot.title=element_text(hjust=0.5, size =18, face="bold"),plot.caption = element_text(hjust=0.5, size =12)))
-                                    #+ plot_annotation(title="Larvae Survival after a Cold Shock")
+Final <- (SLCS_b1|SLCS_b2)/(SLCS_b3|SLCS_b4) 
 
 
 # Export plot as png file
 ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/Stress_Resistance_Experiment/Analysis/2026_Stress_Resistance/Graphs _and_Tables/Word/Larval_Cold_Shock.png",
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Larval_Cold_Shock.png",
   plot = Final,          
-  width = 40,                    
-  height = 20,                    
+  width = 45,                    
+  height = 25,                    
   units = "cm",                   
   dpi = 300                        
 )

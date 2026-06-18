@@ -1,19 +1,10 @@
-library(ggplot2)
-#library(ggsignif)
-library(readxl)
-#library(FSA)
-library(stringr)
-library(patchwork)
-library(tidyverse)
-library(car)
-library(lattice)
-library(rstatix)
 library(ggpubr)
-library(broom)
-library(flextable)
-library(emmeans)
-library(MASS)
 library(dplyr)
+library(ggplot2)
+library(rstatix)
+library(car)
+library(stringr)
+library(patchwork) 
 
 
 Colors = c(
@@ -31,12 +22,13 @@ Colors = c(
 
 plot_theme <- theme_bw()+
   theme(axis.line = element_line(color = "black", linewidth = 0.8),
-        axis.title.x = element_text(face = "bold", size = 14),
-        axis.title.y = element_text(face = "bold", size = 14),
-        axis.text.x = element_text(face = "bold", size = 11),
-        axis.text.y = element_text(face = "bold", size = 11),
-        legend.title = element_text(face = "bold", size = 16),
-        legend.text = element_text(face = "bold", size = 12)
+        axis.title.x = element_text(face = "bold", size = 22),
+        axis.title.y = element_text(face = "bold", size = 22),
+        axis.text.x = element_text(face = "bold", size = 16),
+        axis.text.y = element_text(face = "bold", size = 16),
+        legend.title = element_text(face = "bold", size = 20),
+        legend.text = element_text(face = "bold", size = 18),
+        plot.tag = element_text(size = 20, face="bold")
   )
 
 y_axis <- scale_y_continuous(
@@ -51,9 +43,8 @@ DataSLHS <- read.csv2(file.choose())
 SLHS <- DataSLHS
 
 
-SLHS$Total.survival <- SLHS$Adults.after.experiment + SLHS$Pupae.after.experiment
-SLHS$Survival.rate <- SLHS$Total.survival/ SLHS$Total.eggs
-SLHS$Adult.Survival.rate <- SLHS$Adults.after.experiment/SLHS$Total.eggs
+SLHS$Total.survival <- SLHS$Adults_after_experiment + SLHS$Pupae_after_experiment
+SLHS$Survival.rate <- SLHS$Total.survival/ SLHS$Total_eggs
 
 # Assumptions
 
@@ -61,8 +52,15 @@ M_Survival_Rate <- lm(Survival.rate~Karyotype, SLHS)
 shapiro.test(M_Survival_Rate$residuals)
 
 par(mfrow=c(1,2))
-hist(aov(M_Survival_Rate)$residuals)
-qqPlot(aov(M_Survival_Rate)$residuals, id=FALSE)
+hist(aov(M_Survival_Rate)$residuals,       
+     main="A. Histogramm of residuals",
+     xlab="Residuals value",
+     ylab="Frequency")
+
+qqPlot(aov(M_Survival_Rate)$residuals, id=FALSE,
+       main="B. Q-Q Plot",
+       xlab="Theoretical Quantiles",
+       ylab="Residuals value")
 
 leveneTest(Survival.rate~Karyotype, SLHS)
 
@@ -114,6 +112,7 @@ SLHS_b1 <- ggplot(SLHS_3RP, aes(x = Karyotype, y = Survival.rate, fill = Karyoty
   y_axis+
   plot_theme+
   ylab("Survival rate in %" )+
+  labs(tag="A")+
   stat_pvalue_manual(p_SLHS_3RP, label="p.signif", hide.ns = TRUE, y.position = 0.7, step.increase = 0.08)
 
 
@@ -125,6 +124,7 @@ SLHS_b2 <- ggplot(SLHS_2Lt, aes(x = Karyotype, y = Survival.rate, fill = Karyoty
   theme_bw()+
   plot_theme+
   ylab("Survival rate in %" )+
+  labs(tag="B")+
   stat_pvalue_manual(p_SLHS_2Lt, label="p.signif", hide.ns = TRUE, y.position=0.80, step.increase = 0.08)
 
 
@@ -135,6 +135,7 @@ SLHS_b3 <- ggplot(SLHS_3RK, aes(x = Karyotype, y = Survival.rate, fill = Karyoty
   y_axis+
   plot_theme+
   ylab("Survival rate in %" )+
+  labs(tag="C")+
   stat_pvalue_manual(p_SLHS_3RK, label="p.signif", hide.ns = TRUE, y.position = 0.8,  step.increase = 0.08)
 
 
@@ -145,19 +146,18 @@ SLHS_b4 <- ggplot(SLHS_Homoz, aes(x = Karyotype, y = Survival.rate, fill = Karyo
   y_axis+
   plot_theme+
   ylab("Survival rate in %" )+
+  labs(tag="D")+
   stat_pvalue_manual(p_SLHS_Homoz, label="p.signif", hide.ns = TRUE, y.position = 0.65, step.increase = 0.08)
 
 
-Final <-(SLHS_b1|SLHS_b2)/(SLHS_b3|SLHS_b4) + plot_annotation(tag_levels = "A",
-                                    theme=theme(plot.title=element_text(hjust=0.5, size =18, face="bold"),plot.caption = element_text(hjust=0.5, size =12)))
-                                    #+ plot_annotation(title="Larvae Survival after a Heat Shock")
+Final <-(SLHS_b1|SLHS_b2)/(SLHS_b3|SLHS_b4)
 
 # Export plot as png file
 ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/Stress_Resistance_Experiment/Analysis/2026_Stress_Resistance/Graphs _and_Tables/Word/Larval_Heat_Shock.png",
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Larval_Heat_Shock.png",
   plot = Final,          
-  width = 40,                    
-  height = 20,                    
+  width = 45,                    
+  height = 25,                     
   units = "cm",                   
   dpi = 300                        
 )

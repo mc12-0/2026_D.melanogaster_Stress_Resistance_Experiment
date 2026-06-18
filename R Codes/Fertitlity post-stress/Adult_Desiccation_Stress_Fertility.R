@@ -1,21 +1,10 @@
+library(dplyr) 
 library(ggplot2)
-#library(ggsignif)
-library(readxl)
-#library(FSA)
-library(stringr)
-library(patchwork)
-library(tidyverse)
-library(car)
-library(lattice)
 library(rstatix)
-library(ggpubr)
-library(broom)
-library(flextable)
-library(emmeans)
-library(MASS)
-library(dplyr)
-
-
+library(ggpubr) 
+library(car) 
+library(stringr)  
+library(patchwork)
 
 Colors = c(
   "STD" ="#00b4d8",
@@ -33,12 +22,13 @@ Colors = c(
 
 plot_theme <- theme_bw()+
   theme(axis.line = element_line(color = "black", linewidth = 0.8),
-        axis.title.x = element_text(face = "bold", size = 14),
-        axis.title.y = element_text(face = "bold", size = 14),
-        axis.text.x = element_text(face = "bold", size = 11),
-        axis.text.y = element_text(face = "bold", size = 11),
-        legend.title = element_text(face = "bold", size = 16),
-        legend.text = element_text(face = "bold", size = 12)
+        axis.title.x = element_text(face = "bold", size = 22),
+        axis.title.y = element_text(face = "bold", size = 22),
+        axis.text.x = element_text(face = "bold", size = 16),
+        axis.text.y = element_text(face = "bold", size = 16),
+        legend.title = element_text(face = "bold", size = 20),
+        legend.text = element_text(face = "bold", size = 18),
+        plot.tag = element_text(size = 20, face="bold")
   )
 
 
@@ -46,10 +36,8 @@ plot_theme <- theme_bw()+
 
 DataFADS <- read.csv2(file.choose())
 FADS <- DataFADS
-FADS <- DataFADS[-c(which(is.na(DataFADS$Adults))),]
 
-FADS$Fertility <- FADS$Adults + FADS$Pupae..dark.dead.
-FADS$Number.of.adults <-FADS$Fertility
+FADS$Fertility <- FADS$Adults + FADS$Pupae_.dark.dead.
 
 
 # Assumption
@@ -58,8 +46,14 @@ M_FADS <- lm(Fertility ~ Karyotype, FADS)
 shapiro.test(aov(M_FADS)$residuals)
 
 par(mfrow=c(1,2))
-hist(aov(M_FADS)$residuals)
-qqPlot(aov(M_FADS)$residuals, id=FALSE)
+hist(aov(M_FADS)$residuals,
+     main="A. Histogramm of residuals",
+     xlab="Residuals value",
+     ylab="Frequency")
+qqPlot(aov(M_FADS)$residuals, id=FALSE,
+       main="B. Q-Q Plot",
+       xlab="Theoretical Quantiles",
+       ylab="Residuals value")
 
 leveneTest(Fertility ~ Karyotype, FADS)
 
@@ -112,58 +106,59 @@ p_FADS_Homoz <- S_Contrast.FADS[S_Contrast.FADS$group1 %in% c("STD","3RP","2Lt",
 
 # Box plot
 
-FADS_b1 <- ggplot(FADS_3RP, aes(x = Karyotype, y = Number.of.adults, fill = Karyotype)) +
+FADS_b1 <- ggplot(FADS_3RP, aes(x = Karyotype, y = Fertility, fill = Karyotype)) +
   geom_boxplot() +
   scale_fill_manual(values = Colors,labels = function(x) gsub("_", " ", x)) +
   scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   ylim(0,170) +
   plot_theme+
   ylab("Number of offspring")+
+  labs(tag="A")+
   stat_pvalue_manual(p_FADS_3RP, label="p.signif", hide.ns = TRUE, y.position = 130,  step.increase = 0.08)
 
-FADS_b2 <- ggplot(FADS_2Lt, aes(x = Karyotype, y = Number.of.adults, fill = Karyotype)) +
+FADS_b2 <- ggplot(FADS_2Lt, aes(x = Karyotype, y = Fertility, fill = Karyotype)) +
   geom_boxplot() +
   scale_fill_manual(values = Colors,labels = function(x) gsub("_", " ", x)) +
   scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   ylim(0,170) +
   plot_theme+
   ylab("Number of offspring")+
+  labs(tag="B")+
   stat_pvalue_manual(p_FADS_2Lt, label="p.signif", hide.ns = TRUE, y.position= 130, step.increase = 0.08)
 
 
-FADS_b3 <- ggplot(FADS_3RK, aes(x = Karyotype, y = Number.of.adults, fill = Karyotype)) +
+FADS_b3 <- ggplot(FADS_3RK, aes(x = Karyotype, y = Fertility, fill = Karyotype)) +
   geom_boxplot() +
   scale_fill_manual(values = Colors,labels = function(x) gsub("_", " ", x)) +
   scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   ylim(0,170)+
   plot_theme+
   ylab("Number of offspring")+
+  labs(tag="C")+
   stat_pvalue_manual(p_FADS_3RK, label="p.signif", hide.ns = TRUE, y.position = 150, step.increase = 0.08)
 
 
-FADS_b4 <- ggplot(FADS_Homoz, aes(x = Karyotype, y = Number.of.adults, fill = Karyotype)) +
+FADS_b4 <- ggplot(FADS_Homoz, aes(x = Karyotype, y = Fertility, fill = Karyotype)) +
   geom_boxplot() +
   scale_fill_manual(values = Colors,labels = function(x) gsub("_", " ", x)) +
   scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   ylim(0,170)+
   plot_theme+
   ylab("Number of offspring")+
+  labs(tag="D")+
   stat_pvalue_manual(p_FADS_Homoz, label="p.signif", hide.ns = TRUE, y.position = 150, step.increase = 0.08)
 
 
-Final <- (FADS_b1|FADS_b2)/(FADS_b3|FADS_b4) + plot_annotation(tag_levels='A',
-                                                               theme=theme(plot.title=element_text(hjust=0.5, size =18, face="bold"),
-                                                                  plot.caption = element_text(hjust=0.5, size =12)))
-#+ plot_annotation(title="Fertility after a Desiccation Stress"
+Final <- (FADS_b1|FADS_b2)/(FADS_b3|FADS_b4)
 
 
 
 # Export plot as png file
 ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/Stress_Resistance_Experiment/Analysis/2026_Stress_Resistance/Graphs _and_Tables/Word/Adult_Desiccation_Stress_Fertility.png",
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Adult_Desiccation_Stress_Fertility.png",
   plot = Final,          
-  width = 40,                    
-  height = 20,                    
+  width = 45,                    
+  height = 25,                    
   units = "cm",                   
   dpi = 300                        
 )

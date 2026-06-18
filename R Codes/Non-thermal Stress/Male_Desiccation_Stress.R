@@ -1,19 +1,9 @@
+library(dplyr)
 library(ggplot2)
-#library(ggsignif)
-library(readxl)
-#library(FSA)
+library(rstatix)
+library(car)
 library(stringr)
 library(patchwork)
-library(tidyverse)
-library(car)
-library(lattice)
-library(rstatix)
-library(ggpubr)
-library(broom)
-library(flextable)
-library(emmeans)
-library(MASS)
-library(dplyr)
 
 
 
@@ -32,12 +22,13 @@ Colors = c(
 
 plot_theme <- theme_bw()+
   theme(axis.line = element_line(color = "black", linewidth = 0.8),
-        axis.title.x = element_text(face = "bold", size = 14),
-        axis.title.y = element_text(face = "bold", size = 14),
-        axis.text.x = element_text(face = "bold", size = 11),
-        axis.text.y = element_text(face = "bold", size = 11),
-        legend.title = element_text(face = "bold", size = 16),
-        legend.text = element_text(face = "bold", size = 12)
+        axis.title.x = element_text(face = "bold", size = 22),
+        axis.title.y = element_text(face = "bold", size = 22),
+        axis.text.x = element_text(face = "bold", size = 16),
+        axis.text.y = element_text(face = "bold", size = 16),
+        legend.title = element_text(face = "bold", size = 20),
+        legend.text = element_text(face = "bold", size = 18),
+        plot.tag = element_text(size = 20, face="bold")
   )
 
 y_axis <- scale_y_continuous(
@@ -49,9 +40,8 @@ y_axis <- scale_y_continuous(
 # Import Data
 DataSADS.M <- read.csv2(file.choose())
 SADS.M <- DataSADS.M
-SADS.M <- DataSADS.M[-c(which(is.na(DataSADS.M$Total.Adults))),]
 
-SADS.M$M.Survival <- SADS.M$ALIVE.M.after.exp/SADS.M$TOTAL.M
+SADS.M$M.Survival <- SADS.M$ALIVE_M/SADS.M$TOTAL_M
 
 
 # Assumption
@@ -61,8 +51,15 @@ M_SADS.M <- lm(M.Survival ~ Karyotype, SADS.M)
 shapiro.test(aov(M_SADS.M)$residuals)
 
 par(mfrow=c(1,2))
-hist(aov(M_SADS.M)$residuals)
-qqPlot(aov(M_SADS.M)$residuals, id=FALSE)
+hist(aov(M_SADS.M)$residuals,
+     main="A. Histogramm of residuals",
+     xlab="Residuals value",
+     ylab="Frequency")
+
+qqPlot(aov(M_SADS.M)$residuals, id=FALSE,
+       main="B. Q-Q Plot",
+       xlab="Theoretical Quantiles",
+       ylab="Residuals value")
 
 leveneTest(M.Survival ~ Karyotype, SADS.M)
 
@@ -94,13 +91,6 @@ S_Contrast.SADS.M <- Contrast.SADS.M[Contrast.SADS.M$p< a.18,]
 S_Contrast.SADS.M <- mutate(S_Contrast.SADS.M, p.signif =case_when(p < a.18 ~ "*", TRUE ~ "ns"))  
 
 
-# Add p-value
-
-p_SADS.M_3RP <- S_Contrast.SADS.M[S_Contrast.SADS.M$group1 %in% c("STD","3RP","3RP_HET_1", "3RP_HET_2") & S_Contrast.SADS.M$group2 %in% c("STD","3RP","3RP_HET_1", "3RP_HET_2"),]
-p_SADS.M_2Lt <- S_Contrast.SADS.M[S_Contrast.SADS.M$group1 %in% c("STD","2Lt","2Lt_HET_1", "2Lt_HET_2") & S_Contrast.SADS.M$group2 %in% c("STD","2Lt","2Lt_HET_1", "2Lt_HET_2"),]
-p_SADS.M_3RK <- S_Contrast.SADS.M[S_Contrast.SADS.M$group1 %in% c("STD","3RK","3RK_HET_1", "3RK_HET_2") & S_Contrast.SADS.M$group2 %in% c("STD","3RK","3RK_HET_1", "3RK_HET_2"),]
-p_SADS.M_Homoz <- S_Contrast.SADS.M[S_Contrast.SADS.M$group1 %in% c("STD","3RP","2Lt","3RK") & S_Contrast.SADS.M$group2 %in% c("STD","3RP","2Lt","3RK"),]
-
 # Box plot
 
 SADS.M_b1 <- ggplot(SADS.M_3RP, aes(x = Karyotype, y = M.Survival, fill = Karyotype)) +
@@ -109,8 +99,8 @@ SADS.M_b1 <- ggplot(SADS.M_3RP, aes(x = Karyotype, y = M.Survival, fill = Karyot
   scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   y_axis+
   plot_theme+
-  ylab("Male survival rate in %")
-#stat_pvalue_manual(p_SADS.M_3RP, label="p.signif", hide.ns = TRUE, y.position = 1.05,  step.increase = 0.08)
+  ylab("Male survival rate in %") +
+  labs(tag="A")
 
 SADS.M_b2 <- ggplot(SADS.M_2Lt, aes(x = Karyotype, y = M.Survival, fill = Karyotype)) +
   geom_boxplot() +
@@ -118,9 +108,8 @@ SADS.M_b2 <- ggplot(SADS.M_2Lt, aes(x = Karyotype, y = M.Survival, fill = Karyot
   scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   y_axis+
   plot_theme+
-  ylab("Male survival rate in %")
-#stat_pvalue_manual(p_SADS.M_2Lt, label="p.signif", hide.ns = TRUE, y.position= 1.05, step.increase = 0.08)
-
+  ylab("Male survival rate in %")+
+  labs(tag="B")
 
 SADS.M_b3 <- ggplot(SADS.M_3RK, aes(x = Karyotype, y = M.Survival, fill = Karyotype)) +
   geom_boxplot() +
@@ -129,7 +118,7 @@ SADS.M_b3 <- ggplot(SADS.M_3RK, aes(x = Karyotype, y = M.Survival, fill = Karyot
   y_axis+
   plot_theme+
   ylab("Male survival rate in %")+
-  stat_pvalue_manual(p_SADS.M_3RK, label="p.signif", hide.ns = TRUE, y.position = 0.9, step.increase = 0.08)
+  labs(tag="C")
 
 
 SADS.M_b4 <- ggplot(SADS.M_Homoz, aes(x = Karyotype, y = M.Survival, fill = Karyotype)) +
@@ -139,21 +128,17 @@ SADS.M_b4 <- ggplot(SADS.M_Homoz, aes(x = Karyotype, y = M.Survival, fill = Kary
   y_axis+
   plot_theme+
   ylab("Male survival rate in %")+
-  stat_pvalue_manual(p_SADS.M_Homoz, label="p.signif", hide.ns = TRUE, y.position = 0.9, step.increase = 0.08)
+  labs(tag="D")
 
 
-Final <- (SADS.M_b1|SADS.M_b2)/(SADS.M_b3|SADS.M_b4) + plot_annotation(tag_levels='A',
-                                                                       theme=theme(plot.title=element_text(hjust=0.5, size =18, face="bold"),
-                                                                          plot.caption = element_text(hjust=0.5, size =12)))
-                                                      #plot_annotation(title="Male Survival after a Desiccation Stress"
-
+Final <- (SADS.M_b1|SADS.M_b2)/(SADS.M_b3|SADS.M_b4) 
 
 # Export plot as png file
 ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/Stress_Resistance_Experiment/Analysis/2026_Stress_Resistance/Graphs _and_Tables/Word/Male_Desiccation_Stress.png",
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Male_Desiccation_Stress.png",
   plot = Final,          
-  width = 40,                    
-  height = 20,                    
+  width = 45,                    
+  height = 25,                    
   units = "cm",                   
   dpi = 300                        
 )

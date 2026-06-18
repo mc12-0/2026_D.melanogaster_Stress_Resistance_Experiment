@@ -1,19 +1,11 @@
-library(ggplot2)
-#library(ggsignif)
-library(readxl)
-#library(FSA)
-library(stringr)
-library(patchwork)
-library(tidyverse)
-library(car)
-library(lattice)
-library(rstatix)
-library(ggpubr)
-library(broom)
-library(flextable)
-library(emmeans)
-library(MASS)
-library(dplyr)
+library(ggpubr) 
+library(dplyr) 
+library(ggplot2) 
+library(rstatix) 
+library(car) 
+library(stringr) 
+library(patchwork) 
+
 
 Colors = c(
   "STD" ="#00b4d8",
@@ -31,12 +23,13 @@ Colors = c(
 
 plot_theme <- theme_bw()+
   theme(axis.line = element_line(color = "black", linewidth = 0.8),
-        axis.title.x = element_text(face = "bold", size = 14),
-        axis.title.y = element_text(face = "bold", size = 14),
-        axis.text.x = element_text(face = "bold", size = 11),
-        axis.text.y = element_text(face = "bold", size = 11),
-        legend.title = element_text(face = "bold", size = 16),
-        legend.text = element_text(face = "bold", size = 12)
+        axis.title.x = element_text(face = "bold", size = 22),
+        axis.title.y = element_text(face = "bold", size = 22),
+        axis.text.x = element_text(face = "bold", size = 16),
+        axis.text.y = element_text(face = "bold", size = 16),
+        legend.title = element_text(face = "bold", size = 20),
+        legend.text = element_text(face = "bold", size = 18),
+        plot.tag = element_text(size = 20, face="bold")
   )
 
 
@@ -52,12 +45,11 @@ DataSAHS.F <- read.csv2(file.choose())
 SAHS.F <- DataSAHS.F
 
 SAHS.F$F.Survival <- SAHS.F$ALIVE.F/SAHS.F$TOTAL.F
-SAHS.F <- mutate(SAHS.F, Borders=case_when(str_detect(Remarks, "BORD")~ "YES",
-                                           TRUE ~ "NO"))
 
-boxplot(F.Survival~Borders, SAHS.F)
-t.test(F.Survival ~ Borders, SAHS.F, var.equal=TRUE)
-SAHS.F <- SAHS.F[SAHS.F$Borders == "NO",]
+
+boxplot(F.Survival~BORDERS, SAHS.F)
+t.test(F.Survival ~ BORDERS, SAHS.F, var.equal=TRUE)
+SAHS.F <- SAHS.F[SAHS.F$BORDERS == "NO",]
 
 
 # Assumption
@@ -67,8 +59,14 @@ M_SAHS.F <- lm(F.Survival ~ Karyotype, SAHS.F)
 shapiro.test(aov(M_SAHS.F)$residuals)
 
 par(mfrow=c(1,2))
-hist(aov(M_SAHS.F)$residuals)
-qqPlot(aov(M_SAHS.F)$residuals, id=FALSE)
+hist(aov(M_SAHS.F)$residuals,
+     main="A. Histogramm of residuals",
+     xlab="Residuals value",
+     ylab="Frequency")
+qqPlot(aov(M_SAHS.F)$residuals, id=FALSE,
+       main="B. Q-Q Plot",
+       xlab="Theoretical Quantiles",
+       ylab="Residuals value")
 
 leveneTest(F.Survival ~ Karyotype, SAHS.F)
 
@@ -123,6 +121,7 @@ SAHS.F_b1 <- ggplot(SAHS.F_3RP, aes(x = Karyotype, y = F.Survival, fill = Karyot
   y_axis+
   plot_theme+
   ylab("Female survival rate in %" )+
+  labs(tag="A")+
   stat_pvalue_manual(p_SAHS.F_3RP, label="p.signif", hide.ns = TRUE, y.position = 1.05, step.increase = 0.08)
 
 
@@ -133,6 +132,7 @@ SAHS.F_b2 <- ggplot(SAHS.F_2Lt, aes(x = Karyotype, y = F.Survival, fill = Karyot
   y_axis+
   plot_theme+
   ylab("Female survival rate in %" )+
+  labs(tag="B")+
   stat_pvalue_manual(p_SAHS.F_2Lt, label="p.signif", hide.ns = TRUE, y.position=1.05, step.increase = 0.095)
 
 
@@ -143,6 +143,7 @@ SAHS.F_b3 <- ggplot(SAHS.F_3RK, aes(x = Karyotype, y = F.Survival, fill = Karyot
   y_axis+
   plot_theme+
   ylab("Female survival rate in %" )+
+  labs(tag="C")+
   stat_pvalue_manual(p_SAHS.F_3RK, label="p.signif", hide.ns = TRUE, y.position = 1.05,  step.increase = 0.08)
 
 
@@ -153,22 +154,20 @@ SAHS.F_b4 <- ggplot(SAHS.F_Homoz, aes(x = Karyotype, y = F.Survival, fill = Kary
   y_axis+
   plot_theme+
   ylab("Female survival rate in %" )+
+  labs(tag="D")+
   stat_pvalue_manual(p_SAHS.F_Homoz, label="p.signif", hide.ns = TRUE, y.position = 1.05, step.increase = 0.08)
 
 
-Final <- (SAHS.F_b1|SAHS.F_b2)/(SAHS.F_b3|SAHS.F_b4) + plot_annotation(tag_levels = "A", 
-                                                               theme=theme(plot.title=element_text(hjust=0.5, size =18, face="bold"),plot.caption = element_text(hjust=0.5, size =12)))
-                                            #plot_annotation(title="Female Survival after an Adult Heat Shock")
-                                                              
+Final <- (SAHS.F_b1|SAHS.F_b2)/(SAHS.F_b3|SAHS.F_b4)
+
 
 # Export plot as png file
 ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/Stress_Resistance_Experiment/Analysis/2026_Stress_Resistance/R_Scripts_Final/D.melanogaster_Stress_Experiment/Word/Female_Adult_Heat_Shock.png",
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Female_Adult_Heat_Shock.png",
   plot = Final,          
-  width = 40,                    
-  height = 20,                    
+  width = 45,                    
+  height = 25,                    
   units = "cm",                   
   dpi = 300                        
 )
-                                                              
-                                                              
+

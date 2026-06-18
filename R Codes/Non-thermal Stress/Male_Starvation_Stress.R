@@ -1,19 +1,11 @@
-library(ggplot2)
-#library(ggsignif)
-library(readxl)
-#library(FSA)
-library(stringr)
-library(patchwork)
-library(tidyverse)
+library(dplyr) 
+library(ggplot2) 
+library(rstatix) 
 library(car)
-library(lattice)
-library(rstatix)
-library(ggpubr)
-library(broom)
-library(flextable)
+library(stringr)  
+library(patchwork)
 library(emmeans)
-library(MASS)
-library(dplyr)
+
 
 
 Colors = c(
@@ -32,13 +24,15 @@ Colors = c(
 
 plot_theme <- theme_bw()+
   theme(axis.line = element_line(color = "black", linewidth = 0.8),
-        axis.title.x = element_text(face = "bold", size = 14),
-        axis.title.y = element_text(face = "bold", size = 14),
-        axis.text.x = element_text(face = "bold", size = 11),
-        axis.text.y = element_text(face = "bold", size = 11),
-        legend.title = element_text(face = "bold", size = 16),
-        legend.text = element_text(face = "bold", size = 12)
+        axis.title.x = element_text(face = "bold", size = 22),
+        axis.title.y = element_text(face = "bold", size = 22),
+        axis.text.x = element_text(face = "bold", size = 16),
+        axis.text.y = element_text(face = "bold", size = 16),
+        legend.title = element_text(face = "bold", size = 20),
+        legend.text = element_text(face = "bold", size = 18),
+        plot.tag = element_text(size = 20, face="bold")
   )
+
 
 y_axis <- scale_y_continuous(
   limits = c(0, 1.15),
@@ -51,13 +45,17 @@ y_axis <- scale_y_continuous(
 DataSASS.M <-read.csv2(file.choose())
 SASS.M <- DataSASS.M
 
-SASS.M$M.Survival <- SASS.M$ALIVE.M/SASS.M$Total.M
+SASS.M$M.Survival <- SASS.M$ALIVE_M/SASS.M$Total_M
 
-SASS.M <- mutate(SASS.M, Borders=case_when(Remarks == "BORDS" ~ "YES",
-                                           TRUE ~ "NO")) 
-boxplot(M.Survival ~ Borders, SASS.M)
-t.test(M.Survival ~ Borders, SASS.M, var.equal=TRUE)
-SASS.M <- SASS.M[SASS.M$Borders == "NO",]
+boxplot(M.Survival ~ GAS, SASS.M)
+t.test(M.Survival ~ GAS, SASS.M, var.equal=TRUE)
+
+ 
+boxplot(M.Survival ~ BORDERS, SASS.M)
+t.test(M.Survival ~ BORDERS, SASS.M, var.equal=TRUE)
+
+SASS.M<- SASS.M[SASS.M$GAS == "YES",]
+SASS.M <- SASS.M[SASS.M$BORDERS == "NO",]
 
 # Assumptions
 
@@ -65,8 +63,15 @@ M_SASS.M <- lm(M.Survival ~ Karyotype, SASS.M)
 shapiro.test(aov(M_SASS.M)$residuals)
 
 par(mfrow=c(1,2))
-hist(aov(M_SASS.M)$residuals)
-qqPlot(aov(M_SASS.M)$residuals, id=FALSE)
+hist(aov(M_SASS.M)$residuals,
+     main="A. Histogramm of residuals",
+     xlab="Residuals value",
+     ylab="Frequency")
+
+qqPlot(aov(M_SASS.M)$residuals, id=FALSE,
+       main="B. Q-Q Plot",
+       xlab="Theoretical Quantiles",
+       ylab="Residuals value")
 
 leveneTest(M.Survival ~ Karyotype, SASS.M)
 
@@ -112,15 +117,6 @@ S_Contrast.SASS.M <- Contrast.SASS.M[Contrast.SASS.M$p.value < a.18,]
 S_Contrast.SASS.M <- mutate(S_Contrast.SASS.M, p.signif =case_when(p.value< a.18 ~ "*", TRUE ~ "ns"))
 
 
-# Add p-value
-S_Contrast.SASS.M <- separate(S_Contrast.SASS.M, contrast, into= c("group1", "group2"), sep = " - ")
-
-
-p_SASS.M_3RP <- S_Contrast.SASS.M[S_Contrast.SASS.M$group1 %in% c("STD","3RP","3RP_HET_1","3RP_HET_2") & S_Contrast.SASS.M$group2 %in% c("STD","3RP","3RP_HET_1","3RP_HET_2"),]
-# x %in% y checks if each element in x is present in y
-p_SASS.M_2Lt <- S_Contrast.SASS.M[S_Contrast.SASS.M$group1 %in% c("STD","2Lt","2Lt_HET_1","2Lt_HET_2") & S_Contrast.SASS.M$group2 %in% c("STD","2Lt","2Lt_HET_1","2Lt_HET_2"),]
-p_SASS.M_3RK <- S_Contrast.SASS.M[S_Contrast.SASS.M$group1 %in% c("STD","3RK","3RK_HET_1","3RK_HET_2") & S_Contrast.SASS.M$group2 %in% c("STD","3RK","3RK_HET_1","3RK_HET_2"),]
-p_SASS.M_Homoz <- S_Contrast.SASS.M[S_Contrast.SASS.M$group1 %in% c("STD","3RP","2Lt","3RK") & S_Contrast.SASS.M$group2 %in% c("STD","3RP","2Lt","3RK"),]
 
 # Box plot
 
@@ -130,7 +126,8 @@ SASS.M_b1 <- ggplot(SASS.M_3RP, aes(x = Karyotype, y = M.Survival, fill = Karyot
   scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   y_axis+
   plot_theme+
-  ylab("Male survival rate in %")
+  ylab("Male survival rate in %")+
+  labs(tag="A")
 
 SASS.M_b2 <- ggplot(SASS.M_2Lt, aes(x = Karyotype, y = M.Survival, fill = Karyotype)) +
   geom_boxplot() +
@@ -138,8 +135,8 @@ SASS.M_b2 <- ggplot(SASS.M_2Lt, aes(x = Karyotype, y = M.Survival, fill = Karyot
   scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   y_axis+
   plot_theme+
-  ylab("Male survival rate in %")+
-  stat_pvalue_manual(p_SASS.M_2Lt, label="p.signif", hide.ns = TRUE, y.position= 1.05, step.increase = 0.08)
+  ylab("Male survival rate in %") +
+  labs(tag="B")
 
 
 SASS.M_b3 <- ggplot(SASS.M_3RK, aes(x = Karyotype, y = M.Survival, fill = Karyotype)) +
@@ -148,8 +145,8 @@ SASS.M_b3 <- ggplot(SASS.M_3RK, aes(x = Karyotype, y = M.Survival, fill = Karyot
   scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   y_axis+
   plot_theme+
-  ylab("Male survival rate in %")+
-  stat_pvalue_manual(p_SASS.M_3RK, label="p.signif", hide.ns = TRUE, y.position = 1.05, step.increase = 0.08)
+  ylab("Male survival rate in %") +
+  labs(tag="C")
 
 
 SASS.M_b4 <- ggplot(SASS.M_Homoz, aes(x = Karyotype, y = M.Survival, fill = Karyotype)) +
@@ -158,22 +155,20 @@ SASS.M_b4 <- ggplot(SASS.M_Homoz, aes(x = Karyotype, y = M.Survival, fill = Kary
   scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   y_axis+
   plot_theme+
-  ylab("Male survival rate in %")+
-  stat_pvalue_manual(p_SASS.M_Homoz, label="p.signif", hide.ns = TRUE, y.position = 1.05, step.increase = 0.08)
+  ylab("Male survival rate in %") +
+  labs(tag="D")
 
 
 
-Final <- (SASS.M_b1|SASS.M_b2)/(SASS.M_b3|SASS.M_b4) + plot_annotation(tag_levels='A', 
-                                                              theme=theme(plot.title=element_text(hjust=0.5, size =18, face="bold"),plot.caption = element_text(hjust=0.5, size =12)))
-                                            #+ plot_annotation(title="Male Survival after a starvation shock",
+Final <- (SASS.M_b1|SASS.M_b2)/(SASS.M_b3|SASS.M_b4) 
 
 
 # Export plot as png file
 ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/Stress_Resistance_Experiment/Analysis/2026_Stress_Resistance/Graphs _and_Tables/Word/Male_Starvation_Stress.png",
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Male_Starvation_Stress.png",
   plot = Final,          
-  width = 40,                    
-  height = 20,                    
+  width = 45,                    
+  height = 25,                    
   units = "cm",                   
   dpi = 300                        
 )

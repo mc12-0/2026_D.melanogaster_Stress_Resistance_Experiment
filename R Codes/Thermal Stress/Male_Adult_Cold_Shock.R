@@ -1,19 +1,13 @@
+library(ggpubr)
+library(dplyr) 
 library(ggplot2)
-#library(ggsignif)
-library(readxl)
-#library(FSA)
+library(rstatix) 
+library(car)
 library(stringr)
 library(patchwork)
-library(tidyverse)
-library(car)
-library(lattice)
-library(rstatix)
-library(ggpubr)
-library(broom)
-library(flextable)
 library(emmeans)
-library(MASS)
-library(dplyr)
+library(tidyr)
+
 
 
 Colors = c(
@@ -29,16 +23,17 @@ Colors = c(
   "3RK_HET_2"="#ebd9fc"
 )
 
-
 plot_theme <- theme_bw()+
   theme(axis.line = element_line(color = "black", linewidth = 0.8),
-        axis.title.x = element_text(face = "bold", size = 14),
-        axis.title.y = element_text(face = "bold", size = 14),
-        axis.text.x = element_text(face = "bold", size = 11),
-        axis.text.y = element_text(face = "bold", size = 11),
-        legend.title = element_text(face = "bold", size = 16),
-        legend.text = element_text(face = "bold", size = 12)
+        axis.title.x = element_text(face = "bold", size = 22),
+        axis.title.y = element_text(face = "bold", size = 22),
+        axis.text.x = element_text(face = "bold", size = 16),
+        axis.text.y = element_text(face = "bold", size = 16),
+        legend.title = element_text(face = "bold", size = 20),
+        legend.text = element_text(face = "bold", size = 18),
+        plot.tag = element_text(size = 20, face="bold")
   )
+
 
 y_axis <- scale_y_continuous(
   limits = c(0, 1.1),
@@ -61,8 +56,15 @@ M_SACS.M <- lm(M.Survival ~ Karyotype, SACS.M)
 shapiro.test(aov(M_SACS.M)$residuals)
 
 par(mfrow=c(1,2))
-hist(aov(M_SACS.M)$residuals)
-qqPlot(aov(M_SACS.M)$residuals, id=FALSE)
+hist(aov(M_SACS.M)$residuals,
+     main="A. Histogramm of residuals",
+     xlab="Residuals value",
+     ylab="Frequency")
+
+qqPlot(aov(M_SACS.M)$residuals, id=FALSE,
+       main="B. Q-Q Plot",
+       xlab="Theoretical Quantiles",
+       ylab="Residuals value")
 
 leveneTest(M.Survival ~ Karyotype, SACS.M)
 
@@ -125,6 +127,7 @@ SACS.M_b1 <- ggplot(SACS.M_3RP, aes(x = Karyotype, y = M.Survival, fill = Karyot
   y_axis+
   plot_theme+
   ylab("Male survival rate in %")+
+  labs(tag="A")+
   stat_pvalue_manual(p_SACS.M_3RP, label="p.signif", hide.ns = TRUE, y.position = 0.85, step.increase = 0.08)
 
 SACS.M_b2 <- ggplot(SACS.M_2Lt, aes(x = Karyotype, y = M.Survival, fill = Karyotype)) +
@@ -134,6 +137,7 @@ SACS.M_b2 <- ggplot(SACS.M_2Lt, aes(x = Karyotype, y = M.Survival, fill = Karyot
   y_axis+
   plot_theme+
   ylab("Male survival rate in %")+
+  labs(tag="B")+
   stat_pvalue_manual(p_SACS.M_2Lt, label="p.signif", hide.ns = TRUE, y.position=0.97, step.increase = 0.08)
 
 
@@ -143,8 +147,8 @@ SACS.M_b3 <- ggplot(SACS.M_3RK, aes(x = Karyotype, y = M.Survival, fill = Karyot
   scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   y_axis+
   plot_theme+
-  ylab("Male survival rate in %")
-#stat_pvalue_manual(p_SACS.M_3RK, label="p.signif", hide.ns = TRUE, y.position = 0.80,  step.increase = 0.08)
+  ylab("Male survival rate in %")+
+  labs(tag="C")
 
 
 SACS.M_b4 <- ggplot(SACS.M_Homoz, aes(x = Karyotype, y = M.Survival, fill = Karyotype)) +
@@ -154,19 +158,18 @@ SACS.M_b4 <- ggplot(SACS.M_Homoz, aes(x = Karyotype, y = M.Survival, fill = Kary
   y_axis+
   plot_theme+
   ylab("Male survival rate in %")+
+  labs(tag="D")+
   stat_pvalue_manual(p_SACS.M_Homoz, label="p.signif", hide.ns = TRUE, y.position = 0.95, step.increase = 0.08)
 
 
-Final <- (SACS.M_b1|SACS.M_b2)/(SACS.M_b3|SACS.M_b4) + plot_annotation(tag_levels='A', 
-                                                                       theme=theme(plot.title=element_text(hjust=0.5, size =18, face="bold"),plot.caption = element_text(hjust=0.5, size =12)))
-#+plot_annotation(title="Male Survival after Adult Cold shock"
+Final <- (SACS.M_b1|SACS.M_b2)/(SACS.M_b3|SACS.M_b4)
 
 # Export plot as png file
 ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/Stress_Resistance_Experiment/Analysis/2026_Stress_Resistance/Graphs _and_Tables/Word/Male_Adult_Cold_Shock.png",
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Male_Adult_Cold_Shock.png",
   plot = Final,          
-  width = 40,                    
-  height = 20,                    
+  width = 45,                    
+  height = 25,                    
   units = "cm",                   
   dpi = 300                        
 )

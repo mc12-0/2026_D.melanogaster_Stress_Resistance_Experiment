@@ -1,19 +1,9 @@
-library(ggplot2)
-#library(ggsignif)
-library(readxl)
-#library(FSA)
-library(stringr)
-library(patchwork)
-library(tidyverse)
-library(car)
-library(lattice)
-library(rstatix)
-library(ggpubr)
-library(broom)
-library(flextable)
-library(emmeans)
-library(MASS)
-library(dplyr)
+library(dplyr) 
+library(ggplot2) 
+library(rstatix) 
+library(car) 
+library(stringr)  
+library(patchwork) 
 
 
 Colors = c(
@@ -29,15 +19,15 @@ Colors = c(
   "3RK_HET_2"="#ebd9fc"
 )
 
-
 plot_theme <- theme_bw()+
   theme(axis.line = element_line(color = "black", linewidth = 0.8),
-        axis.title.x = element_text(face = "bold", size = 14),
-        axis.title.y = element_text(face = "bold", size = 14),
-        axis.text.x = element_text(face = "bold", size = 11),
-        axis.text.y = element_text(face = "bold", size = 11),
-        legend.title = element_text(face = "bold", size = 16),
-        legend.text = element_text(face = "bold", size = 12)
+        axis.title.x = element_text(face = "bold", size = 22),
+        axis.title.y = element_text(face = "bold", size = 22),
+        axis.text.x = element_text(face = "bold", size = 16),
+        axis.text.y = element_text(face = "bold", size = 16),
+        legend.title = element_text(face = "bold", size = 20),
+        legend.text = element_text(face = "bold", size = 18),
+        plot.tag = element_text(size = 20, face="bold")
   )
 
 y_axis <- scale_y_continuous(
@@ -60,8 +50,15 @@ M_SACS.F <- lm(F.Survival ~ Karyotype, SACS.F)
 shapiro.test(aov(M_SACS.F)$residuals)
 
 par(mfrow=c(1,2))
-hist(aov(M_SACS.F)$residuals)
-qqPlot(aov(M_SACS.F)$residuals, id=FALSE)
+hist(aov(M_SACS.F)$residuals,
+     main="A. Histogramm of residuals",
+     xlab="Residuals value",
+     ylab="Frequency")
+
+qqPlot(aov(M_SACS.F)$residuals, id=FALSE,
+       main="B. Q-Q Plot",
+       xlab="Theoretical Quantiles",
+       ylab="Residuals value")
 
 leveneTest(F.Survival ~ Karyotype, SACS.F)
 
@@ -96,50 +93,57 @@ S_Contrast.SACS.F <- mutate(S_Contrast.SACS.F, p.signif =case_when(p< a.18 ~ "*"
 
 SACS.F_b1 <- ggplot(SACS.F_3RP, aes(x = Karyotype, y = F.Survival, fill = Karyotype)) +
   geom_boxplot() +
-  scale_fill_manual(values = Colors) +
+  scale_fill_manual(values = Colors,labels = function(x) gsub("_", " ", x)) +
+  scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   y_axis+
   plot_theme+
-  ylab("Female survival rate in %" )
+  ylab("Female survival rate in %" )+
+  labs(tag="A")
+
 
 SACS.F_b2 <- ggplot(SACS.F_2Lt, aes(x = Karyotype, y = F.Survival, fill = Karyotype)) +
   geom_boxplot() +
-  scale_fill_manual(values = Colors)+
+  scale_fill_manual(values = Colors,labels = function(x) gsub("_", " ", x)) +
+  scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   y_axis+
   plot_theme+
-  ylab("Female survival rate in %" )
+  ylab("Female survival rate in %" )+
+  labs(tag="B")
+
 
 SACS.F_b3 <- ggplot(SACS.F_3RK, aes(x = Karyotype, y = F.Survival, fill = Karyotype)) +
   geom_boxplot() +
-  scale_fill_manual(values = Colors)+
+  scale_fill_manual(values = Colors,labels = function(x) gsub("_", " ", x)) +
+  scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   y_axis+
   plot_theme+
-  ylab("Female survival rate in %" )
+  ylab("Female survival rate in %" )+
+  labs(tag="C")
+
 
 
 SACS.F_b4 <- ggplot(SACS.F_Homoz, aes(x = Karyotype, y = F.Survival, fill = Karyotype)) +
   geom_boxplot() +
-  scale_fill_manual(values = Colors)+
+  scale_fill_manual(values = Colors,labels = function(x) gsub("_", " ", x)) +
+  scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   y_axis+
   plot_theme+
-  ylab("Female survival rate in %" )
+  ylab("Female survival rate in %" )+
+  labs(tag="D")
 
 
-Final <- (SACS.F_b1|SACS.F_b2)/(SACS.F_b3|SACS.F_b4) + plot_annotation(tag_levels='A', 
-                                                              theme=theme(plot.title=element_text(hjust=0.5, size =18, face="bold"),plot.caption = element_text(hjust=0.5, size =12)))
-                                            #+plot_annotation(title="Female Survival after Adult Cold shock"
+
+Final <- (SACS.F_b1|SACS.F_b2)/(SACS.F_b3|SACS.F_b4)
 
 
 
 # Export plot as png file
-  ggsave(
-    filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/Stress_Resistance_Experiment/Analysis/2026_Stress_Resistance/Graphs _and_Tables/Word/Female_Adult_Cold_Shock.png",
-    plot = Final,          
-    width = 40,                    
-    height = 20,                    
-    units = "cm",                   
-    dpi = 300                        
-  )
-
-
-
+ggsave(
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Female_Adult_Cold_Shock.png",
+  plot = Final,          
+  width = 45,                    
+  height = 25,                    
+  units = "cm",                   
+  dpi = 300                        
+)
 

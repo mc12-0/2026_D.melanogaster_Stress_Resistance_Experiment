@@ -1,19 +1,9 @@
+library(dplyr) 
 library(ggplot2)
-#library(ggsignif)
-library(readxl)
-#library(FSA)
-library(stringr)
-library(patchwork)
-library(tidyverse)
-library(car)
-library(lattice)
 library(rstatix)
-library(ggpubr)
-library(broom)
-library(flextable)
-library(emmeans)
-library(MASS)
-library(dplyr)
+library(car) 
+library(stringr)
+library(patchwork) 
 
 
 Colors = c(
@@ -32,12 +22,13 @@ Colors = c(
 
 plot_theme <- theme_bw()+
   theme(axis.line = element_line(color = "black", linewidth = 0.8),
-        axis.title.x = element_text(face = "bold", size = 14),
-        axis.title.y = element_text(face = "bold", size = 14),
-        axis.text.x = element_text(face = "bold", size = 11),
-        axis.text.y = element_text(face = "bold", size = 11),
-        legend.title = element_text(face = "bold", size = 16),
-        legend.text = element_text(face = "bold", size = 12)
+        axis.title.x = element_text(face = "bold", size = 22),
+        axis.title.y = element_text(face = "bold", size = 22),
+        axis.text.x = element_text(face = "bold", size = 16),
+        axis.text.y = element_text(face = "bold", size = 16),
+        legend.title = element_text(face = "bold", size = 20),
+        legend.text = element_text(face = "bold", size = 18),
+        plot.tag = element_text(size = 20, face="bold")
   )
 
 y_axis <- scale_y_continuous(
@@ -50,13 +41,16 @@ y_axis <- scale_y_continuous(
 
 DataSASS.F <-read.csv2(file.choose())
 SASS.F <- DataSASS.F
-SASS.F$F.Survival <- SASS.F$ALIVE.F/SASS.F$Total.F
+SASS.F$F.Survival <- SASS.F$ALIVE_F/SASS.F$Total_F
 
-SASS.F <- mutate(SASS.F, Borders=case_when(Remarks == "BORDS" ~ "YES",
-                                           TRUE ~ "NO"))
-boxplot(F.Survival ~ Borders, SASS.F)
-t.test(F.Survival ~ Borders, SASS.F, var.equal=TRUE)
-SASS.F <- SASS.F[SASS.F$Borders == "NO",]
+boxplot(F.Survival ~ GAS, SASS.F)
+t.test(F.Survival ~ GAS, SASS.F, var.equal=TRUE)
+
+boxplot(F.Survival ~ BORDERS, SASS.F)
+t.test(F.Survival ~ BORDERS, SASS.F, var.equal=TRUE)
+
+SASS.F <- SASS.F[SASS.F$BORDERS == "NO",]
+SASS.F<- SASS.F[SASS.F$GAS == "YES",]
 
 
 # Assumptions
@@ -66,8 +60,15 @@ M_SASS.F <- lm(F.Survival ~ Karyotype, SASS.F)
 shapiro.test(aov(M_SASS.F)$residuals)
 
 par(mfrow=c(1,2))
-hist(aov(M_SASS.F)$residuals)
-qqPlot(aov(M_SASS.F)$residuals, id=FALSE)
+hist(aov(M_SASS.F)$residuals,
+     main="A. Histogramm of residuals",
+     xlab="Residuals value",
+     ylab="Frequency")
+
+qqPlot(aov(M_SASS.F)$residuals, id=FALSE,
+       main="B. Q-Q Plot",
+       xlab="Theoretical Quantiles",
+       ylab="Residuals value")
 
 leveneTest(F.Survival ~ Karyotype, SASS.F)
 
@@ -108,7 +109,8 @@ SASS.F_b1 <- ggplot(SASS.F_3RP, aes(x = Karyotype, y = F.Survival, fill = Karyot
   scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   y_axis+
   plot_theme+
-  ylab("Female survival rate in %")
+  ylab("Female survival rate in %")+
+  labs(tag="A")
 
 SASS.F_b2 <- ggplot(SASS.F_2Lt, aes(x = Karyotype, y = F.Survival, fill = Karyotype)) +
   geom_boxplot() +
@@ -116,7 +118,8 @@ SASS.F_b2 <- ggplot(SASS.F_2Lt, aes(x = Karyotype, y = F.Survival, fill = Karyot
   scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   y_axis+
   plot_theme+
-  ylab("Female survival rate in %")
+  ylab("Female survival rate in %")+
+  labs(tag="B")
 
 
 SASS.F_b3 <- ggplot(SASS.F_3RK, aes(x = Karyotype, y = F.Survival, fill = Karyotype)) +
@@ -125,7 +128,8 @@ SASS.F_b3 <- ggplot(SASS.F_3RK, aes(x = Karyotype, y = F.Survival, fill = Karyot
   scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   y_axis+
   plot_theme+
-  ylab("Female survival rate in %")
+  ylab("Female survival rate in %")+
+  labs(tag="C")
 
 SASS.F_b4 <- ggplot(SASS.F_Homoz, aes(x = Karyotype, y = F.Survival, fill = Karyotype)) +
   geom_boxplot() +
@@ -133,20 +137,19 @@ SASS.F_b4 <- ggplot(SASS.F_Homoz, aes(x = Karyotype, y = F.Survival, fill = Kary
   scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   y_axis+
   plot_theme+
-  ylab("Female survival rate in %")
+  ylab("Female survival rate in %")+
+  labs(tag="D")
 
 
-Final <- (SASS.F_b1|SASS.F_b2)/(SASS.F_b3|SASS.F_b4) + plot_annotation(tag_levels='A', 
-                                                        theme=theme(plot.title=element_text(hjust=0.5, size =18, face="bold"),plot.caption = element_text(hjust=0.5, size =12)))
-                                                      # plot_annotation(title="Female Survival after a starvation shock", 
+Final <- (SASS.F_b1|SASS.F_b2)/(SASS.F_b3|SASS.F_b4)  
 
 
 # Export plot as png file
 ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/Stress_Resistance_Experiment/Analysis/2026_Stress_Resistance/Graphs _and_Tables/Word/Female_Starvation_Stress.png",
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Female_Starvation_Stress.png",
   plot = Final,          
-  width = 40,                    
-  height = 20,                    
+  width = 45,                    
+  height = 25,                    
   units = "cm",                   
   dpi = 300                        
 )

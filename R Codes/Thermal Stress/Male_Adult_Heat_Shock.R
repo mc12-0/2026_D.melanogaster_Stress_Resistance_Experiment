@@ -1,19 +1,9 @@
-library(ggplot2)
-#library(ggsignif)
-library(readxl)
-#library(FSA)
+library(dplyr) 
+library(ggplot2) 
+library(rstatix) 
+library(car)
 library(stringr)
 library(patchwork)
-library(tidyverse)
-library(car)
-library(lattice)
-library(rstatix)
-library(ggpubr)
-library(broom)
-library(flextable)
-library(emmeans)
-library(MASS)
-library(dplyr)
 
 
 Colors = c(
@@ -32,12 +22,13 @@ Colors = c(
 
 plot_theme <- theme_bw()+
   theme(axis.line = element_line(color = "black", linewidth = 0.8),
-        axis.title.x = element_text(face = "bold", size = 14),
-        axis.title.y = element_text(face = "bold", size = 14),
-        axis.text.x = element_text(face = "bold", size = 11),
-        axis.text.y = element_text(face = "bold", size = 11),
-        legend.title = element_text(face = "bold", size = 16),
-        legend.text = element_text(face = "bold", size = 12)
+        axis.title.x = element_text(face = "bold", size = 22),
+        axis.title.y = element_text(face = "bold", size = 22),
+        axis.text.x = element_text(face = "bold", size = 16),
+        axis.text.y = element_text(face = "bold", size = 16),
+        legend.title = element_text(face = "bold", size = 20),
+        legend.text = element_text(face = "bold", size = 18),
+        plot.tag = element_text(size = 20, face="bold")
   )
 
 y_axis <- scale_y_continuous(
@@ -53,11 +44,10 @@ SAHS.M <- DataSAHS.M
 
 
 SAHS.M$M.Survival <- SAHS.M$ALIVE.M/SAHS.M$TOTAL.M
-SAHS.M <- mutate(SAHS.M, Borders=case_when(str_detect(Remarks, "BORD")~ "YES",
-                                           TRUE ~ "NO"))
 
-boxplot(M.Survival~Borders, SAHS.M)
-t.test(M.Survival ~ Borders, SAHS.M, var.equal=TRUE)
+
+boxplot(M.Survival~BORDERS, SAHS.M)
+t.test(M.Survival ~ BORDERS, SAHS.M, var.equal=TRUE)
 
 
 # Assumptions
@@ -67,8 +57,16 @@ M_SAHS.M <- lm(M.Survival ~ Karyotype, SAHS.M)
 shapiro.test(aov(M_SAHS.M)$residuals)
 
 par(mfrow=c(1,2))
-hist(aov(M_SAHS.M)$residuals)
-qqPlot(aov(M_SAHS.M)$residuals, id=FALSE)
+
+hist(aov(M_SAHS.M)$residuals,
+     main="A. Histogramm of residuals",
+     xlab="Residuals value",
+     ylab="Frequency")
+
+qqPlot(aov(M_SAHS.M)$residuals, id=FALSE,
+       main="B. Q-Q Plot",
+       xlab="Theoretical Quantiles",
+       ylab="Residuals value")
 
 leveneTest(M.Survival ~ Karyotype, SAHS.M)
 
@@ -96,7 +94,8 @@ SAHS.M_b1 <- ggplot(SAHS.M_3RP, aes(x = Karyotype, y = M.Survival, fill = Karyot
   scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   y_axis+
   plot_theme+
-  ylab("Male survival rate in %")
+  ylab("Male survival rate in %")+
+  labs(tag="A")
 
 
 SAHS.M_b2 <- ggplot(SAHS.M_2Lt, aes(x = Karyotype, y = M.Survival, fill = Karyotype)) +
@@ -105,7 +104,8 @@ SAHS.M_b2 <- ggplot(SAHS.M_2Lt, aes(x = Karyotype, y = M.Survival, fill = Karyot
   scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   y_axis+
   plot_theme+
-  ylab("Male survival rate in %")
+  ylab("Male survival rate in %")+
+  labs(tag="B")
 
 SAHS.M_b3 <- ggplot(SAHS.M_3RK, aes(x = Karyotype, y = M.Survival, fill = Karyotype)) +
   geom_boxplot() +
@@ -113,7 +113,8 @@ SAHS.M_b3 <- ggplot(SAHS.M_3RK, aes(x = Karyotype, y = M.Survival, fill = Karyot
   scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   y_axis+
   plot_theme+
-  ylab("Male survival rate in %")
+  ylab("Male survival rate in %")+
+  labs(tag="C")
 
 
 SAHS.M_b4 <- ggplot(SAHS.M_Homoz, aes(x = Karyotype, y = M.Survival, fill = Karyotype)) +
@@ -122,19 +123,17 @@ SAHS.M_b4 <- ggplot(SAHS.M_Homoz, aes(x = Karyotype, y = M.Survival, fill = Kary
   scale_x_discrete(labels = function(x) gsub("_", " ", x))+
   y_axis+
   plot_theme+
-  ylab("Male survival rate in %")
+  ylab("Male survival rate in %")+
+  labs(tag="D")
 
-Final <-(SAHS.M_b1|SAHS.M_b2)/(SAHS.M_b3|SAHS.M_b4) + plot_annotation(tag_levels='A',
-                                                                      theme=theme(plot.title=element_text(hjust=0.5, size =18, face="bold"),
-                                                                          plot.caption = element_text(hjust=0.5, size =12)))
-                                                    #+ plot_annotation(title="Male Survival after an Adult Heat Shock", 
+Final <-(SAHS.M_b1|SAHS.M_b2)/(SAHS.M_b3|SAHS.M_b4) 
 
 # Export plot as png file
 ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/Stress_Resistance_Experiment/Analysis/2026_Stress_Resistance/Graphs _and_Tables/Word/Male_Adult_Heat_Shock.png",
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Male_Adult_Heat_Shock.png",
   plot = Final,          
-  width = 40,                    
-  height = 20,                    
+  width = 45,                    
+  height = 25,                    
   units = "cm",                   
   dpi = 300                        
 )
