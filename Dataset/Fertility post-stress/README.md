@@ -10,12 +10,12 @@ The females that survived the non-thermal stresses were placed individually in v
 We allowed their offspring to develop, and after 14 days (for post-desiccation fertility) and 15 days (for post-starvation fertility), we froze the offspring and counted them.  
 
 ## Data overview
-The name of the diffeerent files follow the next convention:
+The name of the different files follow the next convention:
 - First letter: Fertility 
 - Last letters: Type of Stress on the adults (A = Adult, DS = Desiccation Stress, SS= Starvation Stress)
 
 The 2 files correspond to the following datasets:
-1. `FADS.csv`: Fertility after Adult Desiccation Stresss 
+1. `FADS.csv`: Fertility after Adult Desiccation Stress 
 2. `FASS.csv`: Fertility after Adult Starvation Stress
 
 ### Common Variables 
@@ -48,5 +48,5 @@ The 2 files correspond to the following datasets:
   * `Name_of_tube` — Described above, categorical
   * `Adults` — Number of offspring that successfully emerged as adult flies following the parents' exposure to the desiccation stress, count
   * `Pupae` — Number of offspring that reached the pupal stage following the parents' exposure to the desiccation stress but died or failed to emerge as adults, count
-  * `GAS` — Indicate if the flies in the vials were sexed under gas or not prior the starvation stress (e.g., "YES" or "NO"), categorial
+  * `GAS` — Indicate if the flies in the vials were sexed under gas or not prior the starvation stress (e.g., "YES" or "NO"), categorical
  
