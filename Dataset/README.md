@@ -115,7 +115,7 @@ Two different non-thermal stress were conduct:
 
 ### File details
 
-#### 1. `ADS_F.csv` : 
+#### 1. `ADS_F.csv`: 
 * **Dimensions:** 277 rows × 6 columns
 * **Columns:**
   * `Karyotype` — Described above, categorical
@@ -125,7 +125,7 @@ Two different non-thermal stress were conduct:
   * `ALIVE_F` — Number of females surviving after the desiccation stress exposure, count
   * `DEAD_F` — Number of females that died during the desiccation stress exposure, count
 
-#### 2. `ADS_M.csv` : 
+#### 2. `ADS_M.csv`: 
 * **Dimensions:** 277 rows × 6 columns
 * **Columns:**
   * `Karyotype` — Described above, categorical
@@ -135,7 +135,7 @@ Two different non-thermal stress were conduct:
   * `ALIVE_F` — Number of males surviving after the desiccation stress exposure, count
   * `DEAD_F` — Number of males that died during the desiccation stress exposure, count
   
-#### 3. `ASS_F.csv` : 
+#### 3. `ASS_F.csv`: 
 * **Dimensions:** 242 rows × 9 columns
 * **Columns:**
   * `Karyotype` — Described above, categorical
@@ -147,7 +147,7 @@ Two different non-thermal stress were conduct:
   * `GAS` — Indicate if the flies in the vials were sexed under gas or not prior the starvation stress (e.g., "YES" or "NO"). Only vials marked "YES" were keep for the final statistical analysis, categorial
   * `BORDERS` — Indicate if the vials experienced edge effects during the heat shock (e.g., "YES" or "NO"). Vials marked "YES" were excluded from the final statistical analysis, categorial
  
-#### 4. `ASS_M.csv` :
+#### 4. `ASS_M.csv`:
 * **Dimensions:** 242 rows × 9 columns
 * **Columns:**
   * `Karyotype` — Described above, categorical
@@ -172,7 +172,7 @@ We allowed their offspring to develop, and after 14 days (for post-desiccation f
 
 ### File details
 
-#### 1. `FADS.csv` : 
+#### 1. `FADS.csv`: 
 * **Dimensions:** 342 rows × 6 columns
 * **Columns:**
   * `No.`— Index number for the row
@@ -182,7 +182,7 @@ We allowed their offspring to develop, and after 14 days (for post-desiccation f
   * `Adults` — Number of offspring that successfully emerged as adult flies following the parents' exposure to the desiccation stress, count
   * `Pupae_(dark/dead)` — Number of offspring that reached the pupal stage following the parents' exposure to the desiccation stress but died or failed to emerge as adults, count
   
-#### 2. `FASS.csv` : 
+#### 2. `FASS.csv`: 
 * **Dimensions:** 380 rows × 7 columns
 * **Columns:**
   * `No.`— Index number for the row
