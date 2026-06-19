@@ -6,7 +6,7 @@ This section contains all the data files (.csv format) used to analyze the impac
 
 ## Table of contents
 - [Files Name](#files-name)
-- [Common variables across all files](#common-variable-across-all-files)
+- [Common variables across all files](#common-variables-across-all-files)
 - [Thermal Stress](#thermal-stress)
 - [Non-thermal Stress](#non-thermal-stress)
 - [Female Fertility post-stress](#female-fertility-post-stress)
