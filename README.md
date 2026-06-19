@@ -4,6 +4,12 @@ This section contains all the data files (.csv format) used to analyze the impac
 2. Non-thermal stress (desiccation/starvation) on adult flies.
 3. Measurement of female fertility after a non-thermal stress (desiccation/starvation).
 
+## Table of contents
+- [Files Name](#files-name)
+- [Common variables across all files](#common-variables-across-all-files)
+- [Thermal Stress](#thermal-stress)
+- [Non-thermal Stress](#non-thermal-stress)
+- [Female Fertility post-stress](#female-fertility-post-stress)
 
 ## Files Name
 The name of the different files follow the next convention:
@@ -28,7 +34,7 @@ The 12 files correspond to the follwing dataset:
     1. `FADS.csv`: Fertility after Adult Desiccation Stress
     2. `FASS.csv`: Fertility after Adult Starvation Stress
  
-## Common variables across all flies
+## Common variables across all files
 1. `Karyotype`: The chromosomal inversion group of the tested flies (e.g., *STD*, *3RP*, *2Lt*, *3RK*, and their corresponding heterozygotes like *3RP_HET_1*). *STD* serves as the standard control group.
    
 2. `Vial_rep._nr.`: The replicate number for the given karyotype.
@@ -37,8 +43,8 @@ The 12 files correspond to the follwing dataset:
 
 ## Thermal Stress
 Different thermal stress were conduct: 
-1. **Cold Shock on adult flies** (males and females): Vials containing generally 15 males and 15 female were placed in ice at 0°C for 18 hours.
-2. **Heat Shock on adult flies** (males and females): Vials containing generally 15 males and 15 female were placed in an oven at 39°C for 75 minutes.
+1. **Cold Shock on adult flies (males and females):** Vials containing generally 15 males and 15 female were placed in ice at 0°C for 18 hours.
+2. **Heat Shock on adult flies (males and females):** Vials containing generally 15 males and 15 female were placed in an oven at 39°C for 75 minutes.
 3. **Cold Shock on larvae :** Vials containg 60 hours-old larvae were placed in ice at 0°C for 12 hours.
 4. **Heat Shock on larvae:** Vials containg 60 hours-old larvae were placed in ice at 39°C for 5.5 hours.
 
@@ -193,4 +199,3 @@ We allowed their offspring to develop, and after 14 days (for post-desiccation f
   * `Pupae` — Number of offspring that reached the pupal stage following the parents' exposure to the desiccation stress but died or failed to emerge as adults, count
   * `GAS` — Indicate if the flies in the vials were sexed under gas or not prior the starvation stress (e.g., "YES" or "NO"), categorical
  
-
