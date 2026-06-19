@@ -3,6 +3,7 @@ library(rstatix)
 library(car) 
 library(stringr)  
 library(patchwork)
+library(svglite)
 
 
 Colors = c(
@@ -116,9 +117,9 @@ FASS_b4 <- ggplot(FASS_Homoz, aes(x = Karyotype, y = Fertility, fill = Karyotype
 
 Final <- (FASS_b1|FASS_b2)/(FASS_b3|FASS_b4)
 
-# Export plot as png file
+# Export plot as svg file
 ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Adult_Starvation_Stress_Fertility.png",
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Adult_Starvation_Stress_Fertility.svg",
   plot = Final,          
   width = 45,                    
   height = 25,                    

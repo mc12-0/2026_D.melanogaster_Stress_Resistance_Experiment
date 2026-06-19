@@ -5,6 +5,7 @@ library(rstatix)
 library(car) 
 library(stringr)  
 library(patchwork)
+library(svglite)
 
 
 Colors = c(
@@ -150,9 +151,9 @@ SLCS_b4 <- ggplot(SLCS_Homoz, aes(x = Karyotype, y = Survival.rate, fill = Karyo
 Final <- (SLCS_b1|SLCS_b2)/(SLCS_b3|SLCS_b4) 
 
 
-# Export plot as png file
+# Export plot as svg file
 ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Larval_Cold_Shock.png",
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Larval_Cold_Shock.svg",
   plot = Final,          
   width = 45,                    
   height = 25,                    

@@ -5,6 +5,8 @@ library(ggpubr)
 library(car) 
 library(stringr)  
 library(patchwork)
+library(svglite)
+
 
 Colors = c(
   "STD" ="#00b4d8",
@@ -148,9 +150,9 @@ Final <- (FADS_b1|FADS_b2)/(FADS_b3|FADS_b4)
 
 
 
-# Export plot as png file
+# Export plot as svg file
 ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Adult_Desiccation_Stress_Fertility.png",
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Adult_Desiccation_Stress_Fertility.svg",
   plot = Final,          
   width = 45,                    
   height = 25,                    

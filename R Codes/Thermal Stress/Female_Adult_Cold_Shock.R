@@ -4,7 +4,7 @@ library(rstatix)
 library(car) 
 library(stringr)  
 library(patchwork) 
-
+library(svglite)
 
 Colors = c(
   "STD" ="#00b4d8",
@@ -133,9 +133,9 @@ Final <- (SACS.F_b1|SACS.F_b2)/(SACS.F_b3|SACS.F_b4)
 
 
 
-# Export plot as png file
+# Export plot as svg file
 ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Female_Adult_Cold_Shock.png",
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Female_Adult_Cold_Shock.svg",
   plot = Final,          
   width = 45,                    
   height = 25,                    

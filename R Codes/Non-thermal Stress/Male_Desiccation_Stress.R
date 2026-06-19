@@ -4,6 +4,7 @@ library(rstatix)
 library(car)
 library(stringr)
 library(patchwork)
+library(svglite)
 
 
 
@@ -129,9 +130,9 @@ SADS.M_b4 <- ggplot(SADS.M_Homoz, aes(x = Karyotype, y = M.Survival, fill = Kary
 
 Final <- (SADS.M_b1|SADS.M_b2)/(SADS.M_b3|SADS.M_b4) 
 
-# Export plot as png file
+# Export plot as svg file
 ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Male_Desiccation_Stress.png",
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Male_Desiccation_Stress.svg",
   plot = Final,          
   width = 45,                    
   height = 25,                    

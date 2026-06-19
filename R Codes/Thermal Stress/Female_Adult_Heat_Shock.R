@@ -5,6 +5,7 @@ library(rstatix)
 library(car) 
 library(stringr) 
 library(patchwork) 
+library(svglite)
 
 
 Colors = c(
@@ -156,9 +157,9 @@ SAHS.F_b4 <- ggplot(SAHS.F_Homoz, aes(x = Karyotype, y = F.Survival, fill = Kary
 Final <- (SAHS.F_b1|SAHS.F_b2)/(SAHS.F_b3|SAHS.F_b4)
 
 
-# Export plot as png file
+# Export plot as svg file
 ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Female_Adult_Heat_Shock.png",
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Female_Adult_Heat_Shock.svg",
   plot = Final,          
   width = 45,                    
   height = 25,                    

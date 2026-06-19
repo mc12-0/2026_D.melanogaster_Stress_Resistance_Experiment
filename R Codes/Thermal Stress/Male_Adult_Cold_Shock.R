@@ -7,6 +7,7 @@ library(stringr)
 library(patchwork)
 library(emmeans)
 library(tidyr)
+library(svglite)
 
 
 
@@ -158,9 +159,9 @@ SACS.M_b4 <- ggplot(SACS.M_Homoz, aes(x = Karyotype, y = M.Survival, fill = Kary
 
 Final <- (SACS.M_b1|SACS.M_b2)/(SACS.M_b3|SACS.M_b4)
 
-# Export plot as png file
+# Export plot as svg file
 ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Male_Adult_Cold_Shock.png",
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Male_Adult_Cold_Shock.svg",
   plot = Final,          
   width = 45,                    
   height = 25,                    

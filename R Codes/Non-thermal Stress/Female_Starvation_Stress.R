@@ -4,6 +4,7 @@ library(rstatix)
 library(car) 
 library(stringr)
 library(patchwork) 
+library(svglite)
 
 
 Colors = c(
@@ -139,9 +140,9 @@ SASS.F_b4 <- ggplot(SASS.F_Homoz, aes(x = Karyotype, y = F.Survival, fill = Kary
 Final <- (SASS.F_b1|SASS.F_b2)/(SASS.F_b3|SASS.F_b4)  
 
 
-# Export plot as png file
+# Export plot as svg file
 ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Female_Starvation_Stress.png",
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Female_Starvation_Stress.svg",
   plot = Final,          
   width = 45,                    
   height = 25,                    

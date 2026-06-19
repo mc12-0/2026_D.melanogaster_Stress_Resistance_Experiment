@@ -5,6 +5,8 @@ library(car)
 library(stringr)  
 library(patchwork)
 library(emmeans)
+library(svglite)
+
 
 
 
@@ -157,9 +159,9 @@ SASS.M_b4 <- ggplot(SASS.M_Homoz, aes(x = Karyotype, y = M.Survival, fill = Kary
 Final <- (SASS.M_b1|SASS.M_b2)/(SASS.M_b3|SASS.M_b4) 
 
 
-# Export plot as png file
+# Export plot as svg file
 ggsave(
-  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Male_Starvation_Stress.png",
+  filename = "D:/Users/Marine Caussignac/UniFR/Cours/25-26/Travail de Bachelor/2026_D.melanogaster_Stress_Experiment/Plots/Male_Starvation_Stress.svg",
   plot = Final,          
   width = 45,                    
   height = 25,                    
