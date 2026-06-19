@@ -1,4 +1,3 @@
-# Impact of three chromosomal inversions on stress resistance in *Drosophila melanogaster* from their ancestral range in Zambia
 # README - Data Structure
 This section contains all the data files (.csv format) used to analyze the impact of 3 different chromosomal inversions (karyotypes) on stress resistance  of Zambia originating *Drosophila melanogaster*. Multiple stress experimental setup were performed: 
 1. Thermal stress (heat/cold shock) on both larvae and adult flies.
