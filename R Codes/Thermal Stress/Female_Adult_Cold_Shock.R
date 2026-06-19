@@ -65,10 +65,6 @@ leveneTest(F.Survival ~ Karyotype, SACS.F)
 # Statistical Analysis -- Non-parametric test
 
 kruskal.test(F.Survival ~ Karyotype, SACS.F)
-dunn_test(SACS.F, F.Survival ~ Karyotype)
-
-D_SACS.F <- as.data.frame(dunn_test(SACS.F, F.Survival ~ Karyotype))
-S_SACS.F <- D_SACS.F[D_SACS.F$p.adj<0.05,]
 
 # Contrast Test
 

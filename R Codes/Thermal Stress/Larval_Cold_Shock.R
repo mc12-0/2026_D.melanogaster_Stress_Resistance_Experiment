@@ -68,10 +68,6 @@ leveneTest(Survival.rate~Karyotype, SLCS)
 # Analysis -- Non-parametric test
 
 kruskal.test(Survival.rate ~ Karyotype, SLCS)
-dunn_test(SLCS, Survival.rate ~ Karyotype)
-
-D_SLCS <- as.data.frame(dunn_test(SLCS, Survival.rate ~ Karyotype))
-S_SLCS <- D_SLCS[D_SLCS$p.adj<0.05,]
 
 # Contrast Test
 

@@ -77,13 +77,7 @@ leveneTest(M.Survival ~ Karyotype, SASS.M)
 
 # Statistical Analysis -- ANOVA
 
-M_SASS.M <- lm(M.Survival ~ Karyotype, SASS.M)
 anova(M_SASS.M)
-TukeyHSD(aov(M_SASS.M))$Karyotype
-
-T_SASS.M <-as.data.frame(TukeyHSD(aov(M_SASS.M))$Karyotype)
-S_SASS.M <- T_SASS.M[T_SASS.M$`p adj`<0.05,]
-
 
 # Contrast Test
 

@@ -61,11 +61,6 @@ leveneTest(Fertility ~ Karyotype, FADS)
 # Analysis -- Non-parametric Test
 
 kruskal.test(Fertility ~ Karyotype, FADS)
-dunn_test(FADS, Fertility ~ Karyotype)
-
-D_FADS <- as.data.frame(dunn_test(FADS, Fertility ~ Karyotype))
-S_FADS <- D_FADS[D_FADS$p.adj<0.05,]
-
 
 # Contrast Test
 

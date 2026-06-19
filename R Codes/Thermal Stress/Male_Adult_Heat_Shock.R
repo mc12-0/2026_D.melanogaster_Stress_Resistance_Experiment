@@ -73,11 +73,6 @@ leveneTest(M.Survival ~ Karyotype, SAHS.M)
 # Data Analysis -- Non-parametric test
 
 kruskal.test(M.Survival ~ Karyotype, SAHS.M)
-dunn_test(SAHS.M, M.Survival ~ Karyotype)
-
-D_SAHS.M <- as.data.frame(dunn_test(SAHS.M, M.Survival ~ Karyotype))
-S_SAHS.M <- D_SAHS.M[D_SAHS.M$p.adj<0.05,]
-
 
 # Add p-value
 

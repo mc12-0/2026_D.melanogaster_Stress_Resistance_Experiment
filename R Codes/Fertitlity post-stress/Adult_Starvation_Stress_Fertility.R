@@ -68,11 +68,6 @@ leveneTest(Fertility ~ Karyotype, FASS)
 # Statistical Analysis -- Non-parametric Test
 
 kruskal.test(Fertility ~ Karyotype, FASS)
-dunn_test(FASS, Fertility ~ Karyotype)
-
-D_FASS <- as.data.frame(dunn_test(FASS, Fertility ~ Karyotype))
-S_FASS <- D_FASS[D_FASS$p.adj<0.05,]
-
 
 # Box plot
 
